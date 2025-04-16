@@ -75,4 +75,10 @@ export const ThemeProvider = ({ children }: Props) => {
  * @returns The current value of the `ThemeContext`.
  * 
  */
-export const UseDarkMode = () => useContext(ThemeContext);
+export const UseDarkMode = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("UseDarkMode must be used within a ThemeProvider");
+  }
+  return context;
+}

@@ -7,14 +7,14 @@ export async function handleApiResponse(response: Response) {
   return data;
 }
 
-export function getUserProfile(): Promise<{ user: User | undefined }> {
-  return fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, {
-    headers: {
-      Authorization: `Bearer storage.getToken()`,
-    },
-  }).then(handleApiResponse);
-}
-
+/**
+ * Sends a POST request to the authentication endpoint to log in a user
+ * using their email and password.
+ *
+ * @param data - The login credentials, typically an object containing
+ *               email and password fields.
+ * @returns Promise<AuthResponse>
+ */
 export async function loginWithEmailAndPassword(
   data: unknown
 ): Promise<AuthResponse> {
@@ -31,11 +31,21 @@ export async function loginWithEmailAndPassword(
   return handleApiResponse(response);
 }
 
-export function registerWithEmailAndPassword(
+/**
+ * Registers a new user.
+ *
+ * @param data - The user data to be sent in the request body. This should include
+ *               the necessary fields for user registration.
+ * @returns Promise<User> 
+ */
+export function register(
   data: unknown
-): Promise<AuthResponse> {
+): Promise<User | undefined> {
   return fetch(`${import.meta.env.VITE_API_BASE_URL}/users`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   }).then(handleApiResponse);
 }

@@ -7,21 +7,15 @@ import LabelComponent from "../components/LabelComponent";
 import PhoneNumberComponent from "../components/PhoneNumberComponent";
 import ErrorComponent from "../components/ErrorComponent";
 import { isValidPhoneNumber } from "react-phone-number-input";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastComponent } from "../components/ToastComponent";
 import { classNames } from "../utils/classNames";
 import ButtonComponent from "../components/ButtonComponent";
-import { User } from "../services/interface";
+import { AccountType, Gender, User } from "../services/interface";
+import { useRegister } from "../services/authService";
+import { useNavigate } from "react-router";
 
-enum AccountType {
-  Buyer = "Buyer",
-  Seller = "Seller",
-}
 
-enum Gender {
-  Female = "Female",
-  Male = "Male",
-}
 
 const schema = yup.object({
   name: yup.string().required("You must enter your name"),
@@ -94,10 +88,36 @@ const RegistrationForm = () => {
 
   const { register, control, handleSubmit, formState, reset } = form;
   const { errors, isDirty, isSubmitting } = formState;
+  const { mutateAsync } = useRegister();
+  const navigate = useNavigate();
 
   const onSubmit = (data: RegistrationFormValues) => {
-    console.log("Form Submitted", data);
-    toast(<ToastComponent title="Registered Successfully" />);
+     mutateAsync(data, {
+          onSuccess: (response: User|undefined) => {
+            if (response) {
+              toast(
+                <ToastComponent
+                  title="Registration Successful"
+                  text="You have registered successfully"
+                />
+              );
+              navigate("/login");
+            } else {
+              throw new Error("Login failed");
+            }
+          },
+          onError: (error: Error) => {
+            throw new Error(JSON.stringify(error));
+          },
+        }).catch((error: Error) => {
+          console.log("Error", error);
+          toast(
+            <ToastComponent
+              title="Registration Failed"
+              text="Please check your details and try again"
+            />
+          );
+        });
   };
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<RegistrationFormValues>) => {
@@ -107,7 +127,6 @@ const RegistrationForm = () => {
 
   return (
     <>
-      <ToastContainer />
       <h1>Registration Form</h1>
       <form
         onSubmit={handleSubmit(onSubmit, onError)}

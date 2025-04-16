@@ -52,6 +52,31 @@ export interface User {
  */
 export interface AuthResponse {
   user: User;
-  access_token?: string;
+  access_token: string;
+}
+
+
+/**
+ * Enum representing the types of accounts in the shopping cart application.
+ * 
+ * @enum {string}
+ * @property {string} Buyer - Represents a buyer account type.
+ * @property {string} Seller - Represents a seller account type.
+ */
+export enum AccountType {
+  Buyer = "Buyer",
+  Seller = "Seller",
+}
+
+/**
+ * Enum representing the gender of an individual.
+ * 
+ * @enum {string}
+ * @property {string} Female - Represents the female gender.
+ * @property {string} Male - Represents the male gender.
+ */
+export enum Gender {
+  Female = "Female",
+  Male = "Male",
 }
 

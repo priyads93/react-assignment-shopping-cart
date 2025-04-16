@@ -1,4 +1,6 @@
+import { toast } from "react-toastify";
 import { ThemeContextType, UseDarkMode } from "../context/ThemeContext";
+import { ToastComponent } from "./ToastComponent";
 
 /**
  * A functional React component that renders a toggle button for switching between light and dark modes.
@@ -15,7 +17,16 @@ export default function ToggleButton() {
   };
 
   const handleToggle = () => {
-    setDarkMode(!darkMode);
+    if (setDarkMode) {
+      setDarkMode(!darkMode);
+    } else {
+      toast(
+        <ToastComponent
+          title="Toggle Failed"
+          text="Unable to toggle the theme"
+        />
+      );
+    }
   };
 
   return (

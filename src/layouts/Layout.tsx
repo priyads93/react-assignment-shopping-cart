@@ -1,6 +1,8 @@
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { ThemeProvider } from "../context/ThemeContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserContextType, useUserHook } from "../context/UserContext";
+import { User } from "../services/interface";
 
 /**
  * Layout component that serves as the main structure for the application.
@@ -11,15 +13,24 @@ import { ThemeProvider } from "../context/ThemeContext";
  * @returns {JSX.Element} The rendered layout component.
  */
 function Layout({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+  const user: User | undefined = queryClient.getQueryData(["user"]);
+  const { loggedInUser, setLoggedInUser } =
+    (useUserHook() as UserContextType) || {
+      loggedInUser: null,
+      setLoggedInUser: () => {},
+    };
+  if (user && loggedInUser?.email !== user.email) {
+    setLoggedInUser(user);
+  } 
+
   return (
     <>
-      <ThemeProvider>
-        <div className="flex flex-col h-screen bg-toggle text-toggletext">
-          <Header />
-          {children}
-          <Footer />
-        </div>
-      </ThemeProvider>
+      <div className="flex flex-col h-screen bg-toggle text-toggletext">
+        <Header/>
+        {children}
+        <Footer />
+      </div>
     </>
   );
 }

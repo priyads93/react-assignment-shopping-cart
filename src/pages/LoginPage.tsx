@@ -20,15 +20,16 @@ const LoginPage = () => {
             Loading...
           </div>
         }
-      ></Suspense>
-      <LoginForm />
-      <Link
-        to="/register"
-        className="text-blue-500 hover:underline"
-        aria-label="Go to the registration page"
       >
-        Don't have an account? Sign up here!
-      </Link>
+        <LoginForm />
+        <Link
+          to="/register"
+          className="text-blue-500 hover:underline"
+          aria-label="Go to the registration page"
+        >
+          Don't have an account? Sign up here!
+        </Link>
+      </Suspense>
     </div>
   );
 };

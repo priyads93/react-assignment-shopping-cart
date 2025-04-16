@@ -2,10 +2,15 @@ import { FieldErrors, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import InputTextComponent from "../components/InputTextComponent";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { ToastComponent } from "../components/ToastComponent";
 import { classNames } from "../utils/classNames";
 import ButtonComponent from "../components/ButtonComponent";
+import { useLogin } from "../services/authService";
+import { storage } from "../services/sessionUtils";
+import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { AuthResponse } from "../services/interface";
 
 const schema = yup.object({
   email: yup
@@ -53,14 +58,37 @@ const LoginForm = () => {
 
   const { register, handleSubmit, formState } = form;
   const { errors, isDirty, isSubmitting } = formState;
+  const { mutateAsync } = useLogin();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: LoginFormValues) => {
-    console.log('Data', data);
-    toast(<ToastComponent title="Logged In Successfully" />);
+    mutateAsync(data, {
+      onSuccess: (response: AuthResponse) => {
+        if (response.access_token) {
+          storage.setToken(response.access_token);
+          queryClient.setQueryData(["user"], response.user);
+          toast(<ToastComponent title="Logged In Successfully" />);
+          navigate("/user");
+        } else {
+          throw new Error("Login failed");
+        }
+      },
+      onError: (error: Error) => {
+        throw new Error(JSON.stringify(error));
+      },
+    }).catch((error: Error) => {
+      console.log("Error", error);
+      toast(
+        <ToastComponent
+          title="Login Failed"
+          text="Please check your username and password to try again"
+        />
+      );
+    });
   };
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<LoginFormValues>) => {
-    console.log("Errors", errors);
     toast(<ToastComponent title="Please fix the errors in form" />);
   };
 
@@ -72,7 +100,6 @@ const LoginForm = () => {
         noValidate
         className={classNames.form}
       >
-        <ToastContainer />
         <InputTextComponent
           register={register}
           fieldName="email"
