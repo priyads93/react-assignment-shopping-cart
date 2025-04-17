@@ -1,21 +1,19 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import InputTextComponent from "../components/InputTextComponent";
-import { InputSelectComponent } from "../components/InputSelectComponent";
-import LabelComponent from "../components/LabelComponent";
-import PhoneNumberComponent from "../components/PhoneNumberComponent";
-import ErrorComponent from "../components/ErrorComponent";
+import { InputTextComponent } from "../components/input-text-component";
+import { InputSelectComponent } from "../components/input-select-component";
+import { LabelComponent } from "../components/label-component";
+import { PhoneNumberComponent } from "../components/phone-number-component";
+import { ErrorComponent } from "../components/error-component";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "react-toastify";
-import { ToastComponent } from "../components/ToastComponent";
-import { classNames } from "../utils/classNames";
-import ButtonComponent from "../components/ButtonComponent";
+import { ToastComponent } from "../components/toast-component";
+import { classNames } from "../utils/class-names";
+import { ButtonComponent } from "../components/button-component";
 import { AccountType, Gender, User } from "../services/interface";
-import { useRegister } from "../services/authService";
+import { useRegister } from "../services/auth-service";
 import { useNavigate } from "react-router";
-
-
 
 const schema = yup.object({
   name: yup.string().required("You must enter your name"),
@@ -70,7 +68,7 @@ export type RegistrationFormValues = User;
  * This component renders a registration form with various input fields for user details.
  * It uses `react-hook-form` for form state management and validation, and `yup` for schema validation.
  */
-const RegistrationForm = () => {
+export const RegistrationForm = () => {
   const form = useForm({
     defaultValues: {
       name: "",
@@ -92,32 +90,32 @@ const RegistrationForm = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: RegistrationFormValues) => {
-     mutateAsync(data, {
-          onSuccess: (response: User|undefined) => {
-            if (response) {
-              toast(
-                <ToastComponent
-                  title="Registration Successful"
-                  text="You have registered successfully"
-                />
-              );
-              navigate("/login");
-            } else {
-              throw new Error("Login failed");
-            }
-          },
-          onError: (error: Error) => {
-            throw new Error(JSON.stringify(error));
-          },
-        }).catch((error: Error) => {
-          console.log("Error", error);
+    mutateAsync(data, {
+      onSuccess: (response: User | undefined) => {
+        if (response) {
           toast(
             <ToastComponent
-              title="Registration Failed"
-              text="Please check your details and try again"
+              text="You have registered successfully"
+              title="Registration Successful"
             />
           );
-        });
+          navigate("/login");
+        } else {
+          throw new Error("Login failed");
+        }
+      },
+      onError: (error: Error) => {
+        throw new Error(JSON.stringify(error));
+      },
+    }).catch((error: Error) => {
+      console.log("Error", error);
+      toast(
+        <ToastComponent
+          text="Please check your details and try again"
+          title="Registration Failed"
+        />
+      );
+    });
   };
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<RegistrationFormValues>) => {
@@ -129,70 +127,69 @@ const RegistrationForm = () => {
     <>
       <h1>Registration Form</h1>
       <form
-        onSubmit={handleSubmit(onSubmit, onError)}
-        noValidate
         className={classNames.form}
+        noValidate
+        onSubmit={handleSubmit(onSubmit, onError)}
       >
         <InputTextComponent
-          register={register}
+          errors={errors}
           fieldName="name"
-          errors={errors}
+          register={register}
           type="text"
-        ></InputTextComponent>
+        />
         <InputTextComponent
-          register={register}
+          errors={errors}
           fieldName="email"
-          errors={errors}
+          register={register}
           type="email"
-        ></InputTextComponent>
+        />
         <InputTextComponent
-          register={register}
+          errors={errors}
           fieldName="password"
-          errors={errors}
+          register={register}
           type="password"
-        ></InputTextComponent>
+        />
         <InputTextComponent
-          register={register}
+          errors={errors}
           fieldName="age"
-          errors={errors}
+          register={register}
           type="number"
-        ></InputTextComponent>
+        />
         <InputSelectComponent
-          register={register}
+          errors={errors}
           fieldName="gender"
-          errors={errors}
           options={Object.values(Gender)}
-        ></InputSelectComponent>
-        <InputSelectComponent
           register={register}
-          fieldName="accountType"
+        />
+        <InputSelectComponent
           errors={errors}
+          fieldName="accountType"
           options={Object.values(AccountType)}
-        ></InputSelectComponent>
+          register={register}
+        />
         <PhoneNumberComponent
           control={control}
-          fieldName="phoneNumber"
           errors={errors}
-        ></PhoneNumberComponent>
+          fieldName="phoneNumber"
+        />
         <div className="flex flex-row italic mb-0">
           <input
-            type="checkbox"
-            {...register("termsAndConditions")}
-            className="mr-2"
             aria-label="Accept Terms and Conditions"
+            className="mr-2"
+            {...register("termsAndConditions")}
+            type="checkbox"
           />
-          <LabelComponent label="Accept Terms and Conditions"></LabelComponent>
+          <LabelComponent label="Accept Terms and Conditions" />
           <ErrorComponent errorMessage={errors?.termsAndConditions?.message} />
         </div>
         <ButtonComponent
-          type="submit"
-          disabled={!isDirty || isSubmitting}
           buttonLabel={isSubmitting ? "Submitting..." : "Submit"}
+          disabled={!isDirty || isSubmitting}
+          type="submit"
         />
         <ButtonComponent
-          type="button"
-          disabled={false}
           buttonLabel="Reset"
+          disabled={false}
           onClick={() => {
             if (window.confirm("Are you sure you want to reset the form?")) {
               reset({
@@ -207,10 +204,9 @@ const RegistrationForm = () => {
               });
             }
           }}
+          type="button"
         />
       </form>
     </>
   );
 };
-
-export default RegistrationForm;

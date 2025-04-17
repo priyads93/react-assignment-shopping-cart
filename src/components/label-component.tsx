@@ -1,4 +1,4 @@
-import { classNames } from "../utils/classNames";
+import { classNames } from "../utils/class-names";
 
 /**
  * A React functional component that renders a styled label element.
@@ -8,11 +8,10 @@ import { classNames } from "../utils/classNames";
  *
  * @returns {JSX.Element} A label element with the provided text and styling.
  */
-const LabelComponent = ({ label }: { label: string }) => {
+export const LabelComponent = ({ label }: { label: string }) => {
   return (
-    <label htmlFor={label} className={classNames.label}>
+    <label className={classNames.label} htmlFor={label}>
       {label.charAt(0).toUpperCase() + label.slice(1)}
     </label>
   );
 };
-export default LabelComponent;

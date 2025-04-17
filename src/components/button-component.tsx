@@ -1,11 +1,11 @@
-import { classNames } from "../utils/classNames";
+import { classNames } from "../utils/class-names";
 
-const ButtonComponent = ({
+export const ButtonComponent = ({
   disabled,
   buttonLabel,
   type,
   onClick,
-  className
+  className,
 }: {
   disabled: boolean;
   buttonLabel: string;
@@ -15,14 +15,12 @@ const ButtonComponent = ({
 }) => {
   return (
     <button
-      type={type}
-      disabled={disabled}
       className={className ?? classNames.button}
+      disabled={disabled}
       onClick={onClick}
+      type={type}
     >
       {buttonLabel}
     </button>
   );
 };
-
-export default ButtonComponent;

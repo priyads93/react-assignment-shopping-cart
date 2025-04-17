@@ -1,13 +1,13 @@
-import LabelComponent from "./LabelComponent";
-import ErrorComponent from "./ErrorComponent";
+import { LabelComponent } from "./label-component";
+import { ErrorComponent } from "./error-component";
 import { FieldErrors, Path, UseFormRegister } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
-import { classNames } from "../utils/classNames";
+import { classNames } from "../utils/class-names";
 
 interface InputTextProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   fieldName: Path<T>;
-  errors: FieldErrors<T>;  
+  errors: FieldErrors<T>;
   type: "text" | "number" | "password" | "email" | "date";
 }
 
@@ -35,35 +35,36 @@ interface InputTextProps<T extends FieldValues> {
  * />
  * ```
  */
-const InputTextComponent = <T extends FieldValues>({
-  register,
-  fieldName,
+export const InputTextComponent = <T extends FieldValues>({
   errors,
+  fieldName,
+  register,
   type,
 }: InputTextProps<T>) => {
-  const registerOptions = type === "number" ?{
-    valueAsNumber: true,
-  } : type === "date" ? {
-    valueAsDate: true,
-  } : undefined;
+  const registerOptions =
+    type === "number"
+      ? {
+          valueAsNumber: true,
+        }
+      : type === "date"
+        ? {
+            valueAsDate: true,
+          }
+        : undefined;
   return (
-    <>
-      <div className="mb-3 flex flex-col">
-        <LabelComponent label={fieldName} />
-        <input
-          type={type}
-          id={fieldName}
-          {...register(fieldName,registerOptions )}
-          className={classNames.input}
-          aria-label={fieldName}
-          aria-invalid={errors?.[fieldName] ? "true" : "false"}
-        ></input>
-        <ErrorComponent
-          errorMessage={errors?.[fieldName]?.message as string | undefined}
-        />
-      </div>
-    </>
+    <div className="mb-3 flex flex-col">
+      <LabelComponent label={fieldName} />
+      <input
+        aria-invalid={errors?.[fieldName] ? "true" : "false"}
+        aria-label={fieldName}
+        className={classNames.input}
+        id={fieldName}
+        {...register(fieldName, registerOptions)}
+        type={type}
+      />
+      <ErrorComponent
+        errorMessage={errors?.[fieldName]?.message as string | undefined}
+      />
+    </div>
   );
 };
-
-export default InputTextComponent;

@@ -3,16 +3,15 @@
  *
  * @returns {JSX.Element} A footer element containing copyright information.
  */
-const Footer = () => {
+export const Footer = () => {
   const currentYear = new Date().getFullYear();
   return (
     <footer
-      className="flex flex-row justify-center bg-blue-400"
       aria-label="Footer section with copyright information"
+      className="flex flex-row justify-center bg-blue-400"
     >
       <p>© {currentYear} All rights reserved.</p>
     </footer>
   );
 };
 
-export default Footer;

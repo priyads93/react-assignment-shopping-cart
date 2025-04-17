@@ -1,4 +1,4 @@
-import { classNames } from "../utils/classNames";
+import { classNames } from "../utils/class-names";
 
 /**
  * The `HomePage` component serves as the landing page for the shopping cart application.
@@ -6,7 +6,7 @@ import { classNames } from "../utils/classNames";
  *
  * @returns {JSX.Element} A React functional component rendering the homepage content.
  */
-const HomePage = () => {
+export const HomePage = () => {
   return (
     <div className={classNames.pageContainer}>
       <h1 className="text-3xl p-2 font-bold">Welcome to Shopping World</h1>
@@ -15,4 +15,3 @@ const HomePage = () => {
   );
 }
 
-export default HomePage;

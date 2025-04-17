@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import LoginForm from "../forms/LoginForm";
+import { LoginForm } from "../forms/login-form";
 import { Suspense } from "react";
-import { classNames } from "../utils/classNames";
+import { classNames } from "../utils/class-names";
 
 /**
  * The `LoginPage` component represents the login page of the application.
@@ -11,7 +11,7 @@ import { classNames } from "../utils/classNames";
  * @returns {JSX.Element} The rendered login page component.
  *
  */
-const LoginPage = () => {
+export const LoginPage = () => {
   return (
     <div className={classNames.pageContainer}>
       <Suspense
@@ -23,9 +23,9 @@ const LoginPage = () => {
       >
         <LoginForm />
         <Link
-          to="/register"
-          className="text-blue-500 hover:underline"
           aria-label="Go to the registration page"
+          className="text-blue-500 hover:underline"
+          to="/register"
         >
           Don't have an account? Sign up here!
         </Link>
@@ -33,5 +33,3 @@ const LoginPage = () => {
     </div>
   );
 };
-
-export default LoginPage;

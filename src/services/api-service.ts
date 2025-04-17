@@ -1,5 +1,5 @@
 import { AuthResponse, User } from "./interface";
-import { storage } from "./sessionUtils";
+import { storage } from "./session-utils";
 
 export async function handleApiResponse(response: Response) {
   const data = await response.json();

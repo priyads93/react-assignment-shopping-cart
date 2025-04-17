@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import RegistrationForm from "../forms/RegistrationForm";
-import { classNames } from "../utils/classNames";
+import { RegistrationForm } from "../forms/registration-form";
+import { classNames } from "../utils/class-names";
 
 /**
  * RegistrationPage component.
@@ -10,14 +10,18 @@ import { classNames } from "../utils/classNames";
  *
  * @returns A JSX element representing the registration page.
  */
-const RegistrationPage = () => {
+export const RegistrationPage = () => {
   return (
     <div className={classNames.pageContainer}>
-      <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center h-screen">
+            Loading...
+          </div>
+        }
+      >
         <RegistrationForm />
       </Suspense>
     </div>
   );
 };
-
-export default RegistrationPage;

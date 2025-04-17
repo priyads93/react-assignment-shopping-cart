@@ -1,13 +1,13 @@
 import { FieldErrors, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import InputTextComponent from "../components/InputTextComponent";
+import { InputTextComponent } from "../components/input-text-component";
 import { toast } from "react-toastify";
-import { ToastComponent } from "../components/ToastComponent";
-import { classNames } from "../utils/classNames";
-import ButtonComponent from "../components/ButtonComponent";
-import { useLogin } from "../services/authService";
-import { storage } from "../services/sessionUtils";
+import { ToastComponent } from "../components/toast-component";
+import { classNames } from "../utils/class-names";
+import { ButtonComponent } from "../components/button-component";
+import { useLogin } from "../services/auth-service";
+import { storage } from "../services/session-utils";
 import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse } from "../services/interface";
@@ -46,7 +46,7 @@ export type LoginFormValues = {
  * It uses react-hook-form for form handling and validation with Yup.
  * The form includes error handling and displays a toast notification for errors.
  */
-const LoginForm = () => {
+export const LoginForm = () => {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -81,14 +81,15 @@ const LoginForm = () => {
       console.log("Error", error);
       toast(
         <ToastComponent
-          title="Login Failed"
           text="Please check your username and password to try again"
+          title="Login Failed"
         />
       );
     });
   };
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<LoginFormValues>) => {
+    console.log('Error',errors);
     toast(<ToastComponent title="Please fix the errors in form" />);
   };
 
@@ -96,30 +97,29 @@ const LoginForm = () => {
     <>
       <h1>Login Form</h1>
       <form
-        onSubmit={handleSubmit(onSubmit, onError)}
-        noValidate
         className={classNames.form}
+        noValidate
+        onSubmit={handleSubmit(onSubmit, onError)}
       >
         <InputTextComponent
-          register={register}
+          errors={errors}
           fieldName="email"
-          errors={errors}
-          type="email"
-        ></InputTextComponent>
-        <InputTextComponent
           register={register}
-          fieldName="password"
+          type="email"
+        />
+        <InputTextComponent
           errors={errors}
+          fieldName="password"
+          register={register}
           type="password"
-        ></InputTextComponent>
+        />
         <ButtonComponent
-          type="submit"
-          disabled={!isDirty || isSubmitting}
           buttonLabel="Login"
+          disabled={!isDirty || isSubmitting}
+          type="submit"
         />
       </form>
     </>
   );
 };
 
-export default LoginForm;

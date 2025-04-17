@@ -4,9 +4,9 @@ import {
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import ErrorComponent from "./ErrorComponent";
-import LabelComponent from "./LabelComponent";
-import { classNames } from "../utils/classNames";
+import { ErrorComponent } from "./error-component";
+import { LabelComponent } from "./label-component";
+import { classNames } from "../utils/class-names";
 
 interface InputSelectProps<T extends FieldValues> {
   register: UseFormRegister<T>;
@@ -28,19 +28,16 @@ interface InputSelectProps<T extends FieldValues> {
  * @returns {React.JSX.Element} A JSX element representing the input select component.
  */
 export const InputSelectComponent = <T extends FieldValues>({
-  register,
-  fieldName,
   errors,
+  fieldName,
   options,
+  register,
 }: InputSelectProps<T>): React.JSX.Element => {
   return (
     <div className="mb-3 flex flex-col">
       <LabelComponent label={fieldName} />
-      <select
-        {...register(fieldName)}
-        className={classNames.input}
-      >
-        <option value="" disabled>
+      <select {...register(fieldName)} className={classNames.input}>
+        <option disabled value="">
           Select an option
         </option>
         {options.map((value, index) => {

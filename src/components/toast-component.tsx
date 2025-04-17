@@ -16,7 +16,7 @@ export const ToastComponent = ({
   return (
     <div>
       <h6 className="font-bold">{title}</h6>
-      {text && <p>{text}</p>}
+      {text ? <p>{text}</p> : null}
     </div>
   );
 };
