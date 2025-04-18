@@ -1,5 +1,16 @@
 import { Button } from "primereact/button";
 
+/**
+ * A reusable button component that renders a styled button element.
+ *
+ * @param {Object} props - The properties object.
+ * @param {boolean} props.disabled - Determines if the button is disabled.
+ * @param {string} props.buttonLabel - The text to display inside the button.
+ * @param {"submit" | "button"} props.type - The type of the button, either "submit" or "button".
+ * @param {() => void} [props.onClick] - Optional click event handler for the button.
+ *
+ * @returns {JSX.Element} A styled button element.
+ */
 export const ButtonComponent = ({
   disabled,
   buttonLabel,
@@ -10,7 +21,6 @@ export const ButtonComponent = ({
   buttonLabel: string;
   type: "submit" | "button";
   onClick?: () => void;
-  className?: string;
 }) => {
   return (
     <Button

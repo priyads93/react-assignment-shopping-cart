@@ -1,4 +1,4 @@
-import { classNames } from "../utils/class-names";
+
 
 /**
  * A React functional component that renders a styled label element.

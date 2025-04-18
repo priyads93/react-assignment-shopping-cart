@@ -4,7 +4,7 @@ import { Control, Controller, FieldErrors, Path } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
 import { InputNumber } from "primereact/inputnumber";
 
-interface InputTextProps<T extends FieldValues> {
+interface InputNumberProps<T extends FieldValues> {
   control: Control<T>;
   fieldName: Path<T>;
   errors: FieldErrors<T>;
@@ -33,7 +33,7 @@ export const InputNumberComponent = <T extends FieldValues>({
   min,
   mode,
   max,
-}: InputTextProps<T>) => {
+}: InputNumberProps<T>) => {
   const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
     <div id="inputGroup" className="inputGroup">

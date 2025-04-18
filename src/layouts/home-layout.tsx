@@ -5,8 +5,7 @@ import { Header } from "../components/header-component";
 import { Footer } from "../components/footer-component";
 
 /**
- * Layout component that serves as the main structure for the application.
- * It wraps the content with a `ThemeProvider` and includes a header and footer.
+ * Layout component that serves as the main structure for the application
  *
  * @param {Object} props - The props object.
  * @param {React.JSX.Element} props.children - The child components to be rendered within the layout.

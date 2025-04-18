@@ -1,5 +1,4 @@
 import { Message } from "primereact/message";
-import { classNames } from "../utils/class-names";
 
 /**
  * A functional React component that displays an error message.

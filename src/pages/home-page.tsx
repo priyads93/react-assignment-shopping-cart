@@ -1,4 +1,4 @@
-import { classNames } from "../utils/class-names";
+
 
 /**
  * The `HomePage` component serves as the landing page for the shopping cart application.

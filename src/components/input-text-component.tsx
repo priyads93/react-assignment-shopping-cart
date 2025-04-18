@@ -2,10 +2,7 @@ import { LabelComponent } from "./label-component";
 import { ErrorComponent } from "./error-component";
 import { FieldErrors, Path, UseFormRegister } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
-import { classNames } from "../utils/class-names";
 import { InputText } from "primereact/inputtext";
-import { Message } from "primereact/message";
-import { FloatLabel } from "primereact/floatlabel";
 
 interface InputTextProps<T extends FieldValues> {
   register: UseFormRegister<T>;
@@ -14,26 +11,28 @@ interface InputTextProps<T extends FieldValues> {
   type: "text" | "number" | "password" | "email" | "date";
 }
 
+
 /**
- * A reusable input text component for forms, designed to work with React Hook Form.
- * This component supports generic field values and provides validation error handling.
+ * A reusable input text component that integrates with React Hook Form for form validation.
+ * This component dynamically handles different input types (e.g., number, date) and displays
+ * validation error messages when applicable.
  *
- * @template T - The type of the field values, extending `FieldValues` from React Hook Form.
+ * @template T - The type of the form field values, extending `FieldValues` from React Hook Form.
  *
- * @param {InputTextProps<T>} props - The props for the component.
- * @param {UseFormRegister<T>} props.register - The `register` function from React Hook Form for binding the input field.
- * @param {keyof T} props.fieldName - The name of the field to register, used as the input's `id` and `name`.
- * @param {FieldErrors<T>} props.errors - The validation errors object from React Hook Form, used to display error messages.
- * @param {"text" | "number" | "password" | "email" | "date"} props.type - The type of the input field (e.g., text, number, password, email).
+ * @param {InputTextProps<T>} props - The props for the InputTextComponent.
+ * @param {FieldErrors<T>} props.errors - The validation errors object from React Hook Form.
+ * @param {keyof T} props.fieldName - The name of the field being rendered.
+ * @param {UseFormRegister<T>} props.register - The `register` function from React Hook Form for binding the input.
+ * @param {string} props.type - The type of the input field (e.g., "text", "number", "date").
  *
- * @returns {JSX.Element} A JSX element containing a labeled input field with error handling.
+ * @returns {JSX.Element} A JSX element containing the input field, label, and error message (if any).
  *
  * @example
  * ```tsx
  * <InputTextComponent
- *   register={register}
+ *   errors={formErrors}
  *   fieldName="username"
- *   errors={errors}
+ *   register={register}
  *   type="text"
  * />
  * ```

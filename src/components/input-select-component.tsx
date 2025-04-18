@@ -4,11 +4,9 @@ import {
   FieldErrors,
   FieldValues,
   Path,
-  UseFormRegister,
 } from "react-hook-form";
 import { ErrorComponent } from "./error-component";
 import { LabelComponent } from "./label-component";
-import { classNames } from "../utils/class-names";
 import { Dropdown } from "primereact/dropdown";
 
 interface InputSelectProps<T extends FieldValues> {
@@ -18,15 +16,18 @@ interface InputSelectProps<T extends FieldValues> {
   options: string[];
 }
 
+
 /**
- * A reusable input select component for forms, designed to work with React Hook Form.
- * This component renders a label, a select dropdown, and an error message if validation fails.
+ * A reusable input select component that integrates with React Hook Form's `Controller`.
+ * This component renders a dropdown menu with options, a label, and an error message if validation fails.
+ *
  * @template T - The type of the form field values, extending `FieldValues` from React Hook Form.
- * @param {InputSelectProps<T>} props - The props for the component.
- * @param {UseFormRegister<T>} props.register - The `register` function from React Hook Form for binding the input field.
- * @param {keyof T} props.fieldName - The name of the field to register in the form.
+ *
+ * @param {InputSelectProps<T>} props - The props for the InputSelectComponent.
+ * @param {Control<T>} props.control - The control object from React Hook Form for managing form state.
  * @param {FieldErrors<T>} props.errors - The errors object from React Hook Form for displaying validation errors.
- * @param {string[]} props.options - An array of string options to populate the select dropdown.
+ * @param {string} props.fieldName - The name of the field in the form.
+ * @param {Array<{ label: string; value: string }>} props.options - The options for the dropdown menu, each containing a label and value.
  *
  * @returns {React.JSX.Element} A JSX element representing the input select component.
  */
