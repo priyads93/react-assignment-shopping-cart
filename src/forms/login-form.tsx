@@ -8,9 +8,10 @@ import { classNames } from "../utils/class-names";
 import { ButtonComponent } from "../components/button-component";
 import { useLogin } from "../services/auth-service";
 import { storage } from "../services/session-utils";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse } from "../services/interface";
+import { Card } from "primereact/card";
 
 const schema = yup.object({
   email: yup
@@ -89,15 +90,22 @@ export const LoginForm = () => {
   };
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<LoginFormValues>) => {
-    console.log('Error',errors);
+    console.log("Error", errors);
     toast(<ToastComponent title="Please fix the errors in form" />);
   };
 
   return (
-    <>
-      <h1>Login Form</h1>
+    <Card
+      title="Login Form"
+      footer={
+        <Link aria-label="Go to the registration page" to="/register">
+          Don't have an account? Sign up here!
+        </Link>
+      }
+    >
       <form
-        className={classNames.form}
+        id="form"
+        className="form"
         noValidate
         onSubmit={handleSubmit(onSubmit, onError)}
       >
@@ -119,7 +127,6 @@ export const LoginForm = () => {
           type="submit"
         />
       </form>
-    </>
+    </Card>
   );
 };
-

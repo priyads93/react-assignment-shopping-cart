@@ -1,4 +1,6 @@
 import {
+  Control,
+  Controller,
   FieldErrors,
   FieldValues,
   Path,
@@ -7,9 +9,10 @@ import {
 import { ErrorComponent } from "./error-component";
 import { LabelComponent } from "./label-component";
 import { classNames } from "../utils/class-names";
+import { Dropdown } from "primereact/dropdown";
 
 interface InputSelectProps<T extends FieldValues> {
-  register: UseFormRegister<T>;
+  control: Control<T>;
   fieldName: Path<T>;
   errors: FieldErrors<T>;
   options: string[];
@@ -28,26 +31,27 @@ interface InputSelectProps<T extends FieldValues> {
  * @returns {React.JSX.Element} A JSX element representing the input select component.
  */
 export const InputSelectComponent = <T extends FieldValues>({
+  control,
   errors,
   fieldName,
   options,
-  register,
 }: InputSelectProps<T>): React.JSX.Element => {
   return (
-    <div className="mb-3 flex flex-col">
+    <div id="inputGroup" className="inputGroup">
       <LabelComponent label={fieldName} />
-      <select {...register(fieldName)} className={classNames.input}>
-        <option disabled value="">
-          Select an option
-        </option>
-        {options.map((value, index) => {
-          return (
-            <option key={index} value={value}>
-              {value}
-            </option>
-          );
-        })}
-      </select>
+      <Controller
+        control={control}
+        name={fieldName}
+        render={({ field: { onChange, value } }) => (
+          <Dropdown
+            highlightOnSelect
+            options={options}
+            id={fieldName}
+            onChange={onChange}
+            value={value}
+          />
+        )}
+      />
       <ErrorComponent
         errorMessage={errors?.[fieldName]?.message as string | undefined}
       />

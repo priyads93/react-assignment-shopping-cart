@@ -3,6 +3,9 @@ import { ErrorComponent } from "./error-component";
 import { FieldErrors, Path, UseFormRegister } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
 import { classNames } from "../utils/class-names";
+import { InputText } from "primereact/inputtext";
+import { Message } from "primereact/message";
+import { FloatLabel } from "primereact/floatlabel";
 
 interface InputTextProps<T extends FieldValues> {
   register: UseFormRegister<T>;
@@ -51,20 +54,22 @@ export const InputTextComponent = <T extends FieldValues>({
             valueAsDate: true,
           }
         : undefined;
+
+  const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
-    <div className="mb-3 flex flex-col">
+    <div id="inputGroup" className="inputGroup">
       <LabelComponent label={fieldName} />
-      <input
+      <InputText
         aria-invalid={errors?.[fieldName] ? "true" : "false"}
         aria-label={fieldName}
-        className={classNames.input}
         id={fieldName}
         {...register(fieldName, registerOptions)}
-        type={type}
+        invalid={errorMessage ? true : false}
       />
-      <ErrorComponent
-        errorMessage={errors?.[fieldName]?.message as string | undefined}
-      />
+
+      {errors?.[fieldName]?.message ? (
+        <ErrorComponent errorMessage={errorMessage} />
+      ) : null}
     </div>
   );
 };

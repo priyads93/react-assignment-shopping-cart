@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router";
-import { ButtonComponent } from "./button-component";
 import { toast } from "react-toastify";
 import { ToastComponent } from "./toast-component";
 import { storage } from "../services/session-utils";
 import { User } from "../services/interface";
 import { useQueryClient } from "@tanstack/react-query";
-import { ToggleButton } from "./toggle-button-component";
+import { SwitchThemeComponent } from "./toggle-button-component";
+import { MenuItem } from "primereact/menuitem";
+import { SplitButtonComponent } from "./split-button-component";
+import { MenuBarComponent } from "./menu-bar-component";
 
 /**
  * Header component that displays the main navigation bar for the application.
@@ -34,37 +36,61 @@ export const Header = () => {
     }
   };
 
-  return (
-    <header className="flex flex-row bg-blue-400">
-      <div className="flex justify-center p-3">
-        <Link aria-label="Go to homepage" className="hover:underline" to="/">
-          Shopping Worlds
+  const userMenuItems: MenuItem[] = [
+    {
+      id: "Login",
+      label: user?.name ? user.name : "Login",
+      template: user?.name ? (
+        <></>
+      ) : (
+        <Link aria-label="Go to Login" to="/login">
+          Login
         </Link>
-      </div>
-      <div className="flex flex-row relative md:absolute items-center right-0 p-1.5">
-        {user?.name ? (
-          <div className="p-2">
-            <span className="text-white">{user?.name}</span>
-          </div>
-        ) : (
-          <Link
-            aria-label="Go to Login"
-            className="p-2 hover:underline"
-            to="/login"
-          >
-            Login
+      ),
+      url: "/",
+    },
+    {
+      id: "Log out",
+      label: "Log out",
+      command: () => handleLogout(),
+    },
+  ];
+
+  const menuItems: MenuItem[] = [
+    {
+      id: "Shopping World",
+      label: "Shopping World",
+      template: (
+        <div>
+          <Link aria-label="Go to homepage" to="/">
+            Shopping Worlds
           </Link>
-        )}
-        <ButtonComponent
-          aria-label="Log Out"
-          buttonLabel="Log Out"
-          className="bg-sky-400 disabled:bg-gray-500 hover:bg-sky-200 rounded-md p-2"
-          disabled={false}
-          onClick={() => handleLogout()}
-          type="button"
-        />
-        <ToggleButton />
-      </div>
-    </header>
+        </div>
+      ),
+      url: "/",
+    },
+  ];
+
+  return (
+    <div id="header" className="header">
+      <MenuBarComponent
+        id="menubar"
+        end={
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <SplitButtonComponent
+              label="Account Settings"
+              menuItems={userMenuItems}
+              menuStyle={{
+                padding: "0.5rem",
+                borderRadius: "0.5rem",
+                backgroundColor: "#008080",
+              }}
+            />
+            <SwitchThemeComponent />
+          </div>
+        }
+        menuItems={menuItems}
+      />
+    </div>
   );
 };

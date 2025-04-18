@@ -8,10 +8,9 @@ import { classNames } from "../utils/class-names";
  */
 export const HomePage = () => {
   return (
-    <div className={classNames.pageContainer}>
-      <h1 className="text-3xl p-2 font-bold">Welcome to Shopping World</h1>
-      <p className="text-lg">Your one-stop shop for everything!</p>
+    <div>
+      <h1>Welcome to Shopping World</h1>
+      <p>Your one-stop shop for everything!</p>
     </div>
   );
-}
-
+};

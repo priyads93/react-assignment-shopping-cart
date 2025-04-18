@@ -1,3 +1,4 @@
+import { Message } from "primereact/message";
 import { classNames } from "../utils/class-names";
 
 /**
@@ -17,8 +18,11 @@ export const ErrorComponent = ({ errorMessage }: { errorMessage?: string }) => {
   // and return it
   if (!errorMessage) return null;
   return (
-    <p aria-live="polite" className={classNames.errorMessage}>
-      {errorMessage}
-    </p>
+    <Message
+      aria-live="polite"
+      severity="error"
+      style={{ color: "red", fontSize: "small", fontStyle: "italic" }}
+      text={errorMessage}
+    />
   );
 };

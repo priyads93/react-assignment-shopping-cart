@@ -18,13 +18,9 @@ export const UserInfoPage = () => {
   const userData = useUserHook() as UserContextType;
   if (!userData?.loggedInUser) {
     return (
-      <div className={classNames.pageContainer}>
+      <div>
         <h2>You are unauthorized</h2>
-        <Link
-          aria-label="Go to the login page"
-          className="text-blue-500 hover:underline"
-          to="/login"
-        >
+        <Link aria-label="Go to the login page" to="/login">
           Please Login
         </Link>
       </div>
@@ -43,14 +39,8 @@ export const UserInfoPage = () => {
         break;
     }
     return (
-      <div className={classNames.pageContainer}>
-        <Suspense
-          fallback={
-            <div className="flex justify-center items-center h-screen">
-              Loading...
-            </div>
-          }
-        >
+      <div>
+        <Suspense fallback={<div>Loading...</div>}>
           <p>{welcomeMessage}</p>
         </Suspense>
       </div>

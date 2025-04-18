@@ -1,6 +1,26 @@
 import { toast } from "react-toastify";
-import { ThemeContextType, UseDarkMode } from "../context/theme-context";
 import { ToastComponent } from "./toast-component";
+import { useContext, useState } from "react";
+import { PrimeReactContext } from "primereact/api";
+import { ToggleButton } from "primereact/togglebutton";
+
+/**
+ * Determines the default theme preference for the application.
+ *
+ * This function checks if a theme preference is stored in the browser's localStorage.
+ * If a stored theme is found, it evaluates whether the theme is "dark" (case-insensitive).
+ * If no stored theme is found, it falls back to checking the user's system preference
+ * for a dark color scheme using the `window.matchMedia` API.
+ *
+ * @returns {boolean} `true` if the theme is "dark" or the system prefers a dark color scheme, otherwise `false`.
+ */
+const getDefaultTheme = () => {
+  const storedTheme = localStorage.getItem("theme");
+  if (storedTheme) {
+    return storedTheme.toLowerCase() === "dark";
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+};
 
 /**
  * A functional React component that renders a toggle button for switching between light and dark modes.
@@ -10,15 +30,24 @@ import { ToastComponent } from "./toast-component";
  *
  * @returns {JSX.Element} The rendered toggle button component.
  */
-export const ToggleButton = () => {
-  const { darkMode, setDarkMode } = (UseDarkMode() as ThemeContextType) || {
-    darkMode: false,
-    setDarkMode: () => {},
-  };
+export const SwitchThemeComponent = () => {
+  const [darkMode, setDarkMode] = useState(getDefaultTheme());
 
-  const handleToggle = () => {
-    if (setDarkMode) {
-      setDarkMode(!darkMode);
+  const { changeTheme } = useContext(PrimeReactContext);
+
+  const handleToggle = (input: any) => {
+    if (changeTheme) {
+      const newTheme = input.value ? "dark" : "light";
+      changeTheme(
+        `${input.value ? "light" : "dark"}Theme`,
+        `${newTheme}Theme`,
+        "theme",
+        () => {
+          setDarkMode(!darkMode);
+          document.documentElement.classList.add(newTheme);
+          localStorage.setItem("theme", newTheme);
+        }
+      );
     } else {
       toast(
         <ToastComponent
@@ -30,20 +59,11 @@ export const ToggleButton = () => {
   };
 
   return (
-    <div className="flex flex-col p-1.5 items-center cursor-pointer">
-      <div className="relative">
-        <input
-          aria-label="Toggle dark mode"
-          checked={darkMode}
-          className="sr-only peer"
-          readOnly
-          type="checkbox"
-        />
-        <div
-          className="min-w-11 min-h-6 bg-toggle rounded-full peer  peer-focus:ring-toggle  peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-toggle"
-          onClick={handleToggle}
-        />
-      </div>
-    </div>
+    <ToggleButton
+      onLabel="Dark Mode"
+      offLabel="Light Mode"
+      checked={darkMode}
+      onChange={(e) => handleToggle(e)}
+    ></ToggleButton>
   );
 };

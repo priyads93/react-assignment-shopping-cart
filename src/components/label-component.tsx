@@ -10,7 +10,7 @@ import { classNames } from "../utils/class-names";
  */
 export const LabelComponent = ({ label }: { label: string }) => {
   return (
-    <label className={classNames.label} htmlFor={label}>
+    <label htmlFor={label}>
       {label.charAt(0).toUpperCase() + label.slice(1)}
     </label>
   );

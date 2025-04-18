@@ -1,11 +1,10 @@
-import { classNames } from "../utils/class-names";
+import { Button } from "primereact/button";
 
 export const ButtonComponent = ({
   disabled,
   buttonLabel,
   type,
   onClick,
-  className,
 }: {
   disabled: boolean;
   buttonLabel: string;
@@ -14,13 +13,13 @@ export const ButtonComponent = ({
   className?: string;
 }) => {
   return (
-    <button
-      className={className ?? classNames.button}
+    <Button
       disabled={disabled}
       onClick={onClick}
       type={type}
+      style={{ marginBottom: "0.5rem", marginTop: "0.5rem" }}
     >
       {buttonLabel}
-    </button>
+    </Button>
   );
 };

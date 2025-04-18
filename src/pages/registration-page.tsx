@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { RegistrationForm } from "../forms/registration-form";
-import { classNames } from "../utils/class-names";
 
 /**
  * RegistrationPage component.
@@ -12,16 +11,8 @@ import { classNames } from "../utils/class-names";
  */
 export const RegistrationPage = () => {
   return (
-    <div className={classNames.pageContainer}>
-      <Suspense
-        fallback={
-          <div className="flex justify-center items-center h-screen">
-            Loading...
-          </div>
-        }
-      >
-        <RegistrationForm />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegistrationForm />
+    </Suspense>
   );
 };

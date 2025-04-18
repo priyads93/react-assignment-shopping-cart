@@ -9,4 +9,6 @@ export const classNames = {
   button: "bg-sky-600 disabled:bg-gray-500 hover:bg-sky-400 rounded-md p-2 m-2",
   pageContainer:
     "flex flex-auto flex-col justify-center bg-toggle text-toggletext items-center",
+  dropdown:
+    "p-1 text-sm/normal fill-white rounded-md border-2 border-black-100  hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400",
 };

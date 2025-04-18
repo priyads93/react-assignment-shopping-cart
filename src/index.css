@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -13,4 +13,4 @@
       --color-toggle: #000000;
       --color-toggletext: #ffffff;
     }
-  }
+  } */

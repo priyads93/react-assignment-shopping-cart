@@ -33,14 +33,13 @@ export const PhoneNumberComponent = <T extends FieldValues>({
   errors,
 }: PhoneNumberInputProps<T>) => {
   return (
-    <div className="mb-3 flex flex-col">
+    <div id="inputGroup" className="inputGroup">
       <LabelComponent label={fieldName} />
       <Controller
         control={control}
         name={fieldName}
         render={({ field: { onChange, value } }) => (
           <PhoneInput
-            className={classNames.phoneNumberInput}
             defaultCountry="IN"
             id={fieldName}
             onChange={onChange}

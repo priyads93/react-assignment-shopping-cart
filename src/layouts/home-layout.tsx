@@ -25,9 +25,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-toggle text-toggletext">
+    <div id="layout" className="layout">
       <Header />
-      {children}
+      <div id="body" className="body">
+        {children}
+      </div>
       <Footer />
     </div>
   );

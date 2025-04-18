@@ -9,11 +9,13 @@ import { ErrorComponent } from "../components/error-component";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
-import { classNames } from "../utils/class-names";
 import { ButtonComponent } from "../components/button-component";
 import { AccountType, Gender, User } from "../services/interface";
 import { useRegister } from "../services/auth-service";
 import { useNavigate } from "react-router";
+import { Card } from "primereact/card";
+import { InputNumberComponent } from "../components/input-number-component";
+import { PasswordComponent } from "../components/input-password-component";
 
 const schema = yup.object({
   name: yup.string().required("You must enter your name"),
@@ -124,10 +126,10 @@ export const RegistrationForm = () => {
   };
 
   return (
-    <>
-      <h1>Registration Form</h1>
+    <Card title="Registration Form">
       <form
-        className={classNames.form}
+        id="form"
+        className="form"
         noValidate
         onSubmit={handleSubmit(onSubmit, onError)}
       >
@@ -143,39 +145,38 @@ export const RegistrationForm = () => {
           register={register}
           type="email"
         />
-        <InputTextComponent
+        <PasswordComponent
           errors={errors}
           fieldName="password"
-          register={register}
-          type="password"
+          control={control}
         />
-        <InputTextComponent
+        <InputNumberComponent
           errors={errors}
           fieldName="age"
-          register={register}
-          type="number"
+          control={control}
+          min={18}
+          mode="decimal"
         />
         <InputSelectComponent
           errors={errors}
           fieldName="gender"
           options={Object.values(Gender)}
-          register={register}
+          control={control}
         />
         <InputSelectComponent
           errors={errors}
           fieldName="accountType"
           options={Object.values(AccountType)}
-          register={register}
+          control={control}
         />
         <PhoneNumberComponent
           control={control}
           errors={errors}
           fieldName="phoneNumber"
         />
-        <div className="flex flex-row italic mb-0">
+        <div id="inputGroup" className="inputGroup">
           <input
             aria-label="Accept Terms and Conditions"
-            className="mr-2"
             {...register("termsAndConditions")}
             type="checkbox"
           />
@@ -207,6 +208,6 @@ export const RegistrationForm = () => {
           type="button"
         />
       </form>
-    </>
+    </Card>
   );
 };
