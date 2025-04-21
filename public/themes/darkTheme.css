@@ -68,18 +68,10 @@
 
 /* Customizations to the designer theme should be defined here */
 @layer primereact {
-  .layout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-  }
-
-  .layout .body .p-card {
+  .p-card {
     background-color: var(--primary-color-text);
     color: var(--primary-color);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 2rem;
     text-align: center;
     border: outset;
@@ -87,42 +79,92 @@
     flex-direction: column;
     justify-content: center;
   }
-
-  .layout .body .p-card-title {
+  .p-card-title {
     font-size: larger;
     font-weight: bold;
     padding-bottom: 0.5rem;
   }
 
-  .layout .body .p-card-content {
+  .p-card-content {
     font-size: medium;
     font-weight: normal;
     padding: 0.5rem;
+    .inputGroup {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-around;
+      flex-direction: column;
+      margin-bottom: 0.5rem;
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-content: space-around;
+    }
   }
-
-  .layout .body .p-card-content .inputGroup {
+  .layout {
     display: flex;
-    flex-wrap: wrap;
-    align-content: space-around;
     flex-direction: column;
-    margin-bottom: 0.5rem;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    .body {
+      background-color: var(--primary-color-text);
+      color: var(--primary-color);
+      border-radius: var(--border-radius);
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer {
+      .p-panel {
+        background-color: var(--primary-color);
+        color: var(--primary-color-text);
+        align-items: center;
+        padding: 0.1rem;
+        border-radius: var(--border-radius);
+      }
+    }
+    .header {
+      .p-menubar {
+        background-color: var(--primary-color);
+        color: var(--primary-color-text);
+        padding: 0.5rem;
+        border-radius: var(--border-radius);
+      }
+      .p-togglebutton {
+        padding: 0.5rem;
+        box-shadow: 0 4px 8px 0 var(--gray-500);
+        display: flex;
+        justify-content: center;
+      }
+      .p-menuitem {
+        border: var(--border-color);
+        font-family: var(--font-family);
+        font-size: var(--font-size-medium);
+        padding: 1rem;
+      }
+    }
   }
 
   .p-inputtext {
     border: inset;
-    border-radius: 0.2rem;
+    border-radius: var(--border-radius);
     width: 80%;
   }
 
   .p-password {
     width: 80%;
-    border-radius: 0.2rem;
+    border-radius: var(--border-radius);
   }
 
   .p-invalid {
     border: red;
     border-style: solid;
-    border-radius: 0.2rem;
+    border-radius: var(--border-radius);
+    width: 80%;
   }
 
   .p-button {
@@ -132,6 +174,8 @@
     align-items: center;
     justify-content: center;
     display: flex;
+    border-radius: var(--border-radius);
+    border-color: var(--primary-color-text);
   }
 
   .p-dropdown {
@@ -146,67 +190,108 @@
 
   .p-dropdown-label {
     color: var(--text-color);
+    .p-inputtext {
+      .p-placeholder {
+        color: var(--text-color);
+      }
+    }
+    .p-splitbutton {
+      .p-splitbutton-defaultbutton {
+        .p-button {
+          background-color: var(--surface-0);
+          border-radius: var(--border-radius);
+          padding: 0.5rem;
+        }
+      }
+      .p-menubutton {
+        background-color: var(--primary-color);
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
+      }
+    }
   }
 
-  .p-dropdown-label .p-inputtext .p-placeholder {
-    color: var(--text-color);
+  .p-datascroller {
+    .p-datascroller-header {
+      text-align: center;
+      padding: 0.5rem;
+      font-weight: bolder;
+      font-size: large;
+    }
+    .p-datascroller-footer {
+      text-align: center;
+      padding: 0.5rem;
+    }
+    .p-datascroller-list {
+      padding: 0;
+      margin: 0;
+      background-color: var(--surface-100);
+      border-radius: var(--border-radius);
+      .list-item {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-content: start;
+        padding: 1rem;
+        margin: 0.5rem;
+        border-style: groove;
+        border-radius: var(--border-radius);
+      }
+    }
   }
 
-  .layout .body .p-card-content .form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-content: space-around;
-  }
-
-  .layout .body {
-    background-color: var(--primary-color-text);
-    color: var(--primary-color);
-    border-radius: 0.5rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .layout .footer .p-panel {
-    background-color: var(--primary-color);
+  .p-tag {
+    background: var(--primary-color);
     color: var(--primary-color-text);
-    align-items: center;
-    padding: 0.1rem;
-    border-radius: 0.5rem;
+    font-size: small;
+    font-weight: medium;
+    font-style: italic;
+    padding: 0.25rem;
+    border-radius: var(--border-radius);
+
+    &.p-tag-success {
+      background-color: #28a745;
+    }
+
+    &.p-tag-info {
+      background-color: #17a2b8;
+    }
+
+    &.p-tag-warning {
+      background-color: #ffc107;
+    }
+
+    &.p-tag-danger {
+      background-color: #dc3545;
+    }
   }
 
-  .layout .header .p-menubar {
-    background-color: var(--primary-color);
-    color: var(--primary-color-text);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-  }
-
-  .layout .header .p-togglebutton {
-    padding: 0.5rem;
+  .p-dialog {
+    border-radius: var(--border-radius);
     box-shadow: 0 4px 8px 0 var(--gray-500);
-    display: flex;
-    justify-content: center;
-  }
-
-  .layout .header .p-menuitem {
-    border: var(--border-color);
-    font-family: var(--font-family);
-    font-size: var(--font-size-medium);
-    padding: 1rem;
-  }
-
-  .p-splitbutton .p-splitbutton-defaultbutton .p-button {
-    background-color: var(--surface-0);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-  }
-
-  .p-splitbutton .p-menubutton {
-    background-color: var(--primary-color);
-    border-radius: 1rem;
-    padding: 0.5rem;
+    border-style: groove;
+    .p-header {
+      background-color: var(--primary-color);
+    }
+    .p-dialog-content {
+      background: var(--modal-background-color);
+      color: var(--primary-color-text);
+      padding: var(--content-padding);
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--border-radius);
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-content: space-around;
+    }
+    .p-dialog-title {
+      display: flex;
+      flex-grow: 1;
+      justify-content: center;
+      background-color: var(--surface-300);
+      color: var(--highlight-text-color);
+    }
   }
 }
+

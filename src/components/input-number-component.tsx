@@ -9,7 +9,8 @@ interface InputNumberProps<T extends FieldValues> {
   fieldName: Path<T>;
   errors: FieldErrors<T>;
   min?: number;
-  mode?: "decimal"|"currency";
+  mode?: "decimal" | "currency";
+  currencyCode?: string;
   max?: number;
 }
 
@@ -27,9 +28,10 @@ interface InputNumberProps<T extends FieldValues> {
  *
  */
 export const InputNumberComponent = <T extends FieldValues>({
+  currencyCode,
+  control,
   errors,
   fieldName,
-  control,
   min,
   mode,
   max,
@@ -53,6 +55,7 @@ export const InputNumberComponent = <T extends FieldValues>({
             showButtons
             min={min}
             max={max}
+            currency={currencyCode}
             invalid={errorMessage ? true : false}
           />
         )}

@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { ToastComponent } from "./toast-component";
-import { storage } from "../services/session-utils";
 import { User } from "../services/interface";
 import { useQueryClient } from "@tanstack/react-query";
 import { SwitchThemeComponent } from "./toggle-button-component";
 import { MenuItem } from "primereact/menuitem";
 import { SplitButtonComponent } from "./split-button-component";
 import { MenuBarComponent } from "./menu-bar-component";
+import { logout } from "../services/auth-service";
 
 /**
  * Header component that displays the main navigation bar for the application.
@@ -27,8 +27,7 @@ export const Header = () => {
   const handleLogout = () => {
     try {
       toast(<ToastComponent title="You are logged out from the app" />);
-      queryClient.setQueryData(["user"], null);
-      storage.clearToken();
+      logout(queryClient);
       navigate("/login");
     } catch (error) {
       console.log("error", error);

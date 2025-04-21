@@ -43,6 +43,10 @@ export interface User {
   termsAndConditions: boolean;
 }
 
+export interface UserResponse extends User {
+  userId: number;
+}
+
 /**
  * Represents the response received after an authentication request.
  *
@@ -51,7 +55,7 @@ export interface User {
  * @property {string} [access_token] - An optional access token provided upon successful authentication.
  */
 export interface AuthResponse {
-  user: User;
+  user: UserResponse;
   access_token: string;
 }
 
@@ -77,4 +81,47 @@ export enum AccountType {
 export enum Gender {
   female = "female",
   male = "male",
+}
+
+/**
+ * Enum representing various product categories in the shopping cart application.
+ *
+ * @enum {string}
+ * @property {string} ELECTRONICS - Represents electronic items such as gadgets and devices.
+ * @property {string} CLOTHING - Represents clothing items such as shirts, pants, and dresses.
+ * @property {string} HOMEAPPLIANCES - Represents home appliances such as refrigerators and microwaves.
+ * @property {string} BOOKS - Represents books across various genres and categories.
+ * @property {string} SPORTS - Represents sports-related items such as equipment and accessories.
+ */
+export enum ProductCategory {
+  ELECTRONICS = "electronics",
+  CLOTHING = "clothing",
+  HOMEAPPLIANCES = "homeAppliances",
+  BOOKS = "books",
+  SPORTS = "sports",
+}
+
+/**
+ * Represents a product in the shopping cart system.
+ *
+ * @interface Product
+ *
+ * @property {string} name - The name of the product.
+ * @property {string} description - A brief description of the product.
+ * @property {number} price - The price of the product.
+ * @property {number} quantity - The available quantity of the product.
+ * @property {ProductCategory} categoryType - The category to which the product belongs.
+ * @property {number} userId - The ID of the user associated with the product.
+ * @property {string} imageUrl - The URL of the product's image.
+ * @property {number} rating - The rating for the product.
+ */
+export interface Product {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  categoryType: ProductCategory;
+  userId: number;
+  imageUrl: string;
+  rating?: number;
 }

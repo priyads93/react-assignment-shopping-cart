@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { UserContextType, useUserHook } from "../context/user-context";
-import { User } from "../services/interface";
+import { UserResponse } from "../services/interface";
 import { Header } from "../components/header-component";
 import { Footer } from "../components/footer-component";
 
@@ -13,13 +13,13 @@ import { Footer } from "../components/footer-component";
  */
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
-  const user: User | undefined = queryClient.getQueryData(["user"]);
+  const user: UserResponse | undefined = queryClient.getQueryData(["user"]);
   const { loggedInUser, setLoggedInUser } =
     (useUserHook() as UserContextType) || {
       loggedInUser: null,
       setLoggedInUser: () => {},
     };
-  if (user && loggedInUser?.email !== user.email) {
+  if (user) {
     setLoggedInUser(user);
   }
 

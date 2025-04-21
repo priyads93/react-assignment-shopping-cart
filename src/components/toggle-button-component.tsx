@@ -35,7 +35,7 @@ export const SwitchThemeComponent = () => {
 
   const { changeTheme } = useContext(PrimeReactContext);
 
-  const handleToggle = (input: any) => {
+  const handleToggle = (input: {value: boolean}) => {
     if (changeTheme) {
       const newTheme = input.value ? "dark" : "light";
       changeTheme(

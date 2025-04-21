@@ -4,11 +4,11 @@ import {
   useContext,
   useState,
 } from "react";
-import { User } from "../services/interface";
+import { UserResponse } from "../services/interface";
 
 export type UserContextType = {
-  loggedInUser: User | null;
-  setLoggedInUser: React.Dispatch<React.SetStateAction<User | null>>;
+  loggedInUser: UserResponse | null;
+  setLoggedInUser: React.Dispatch<React.SetStateAction<UserResponse | null>>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -28,7 +28,7 @@ interface Props {
  * @returns {JSX.Element} 
  */
 export const UserProvider = ({ children }: Props) => {
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [loggedInUser, setLoggedInUser] = useState<UserResponse | null>(null);
  
   return (
     <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>

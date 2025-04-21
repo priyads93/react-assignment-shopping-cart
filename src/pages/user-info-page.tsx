@@ -1,4 +1,3 @@
-
 import { UserContextType, useUserHook } from "../context/user-context";
 import { Link } from "react-router";
 import { AccountType } from "../services/interface";
@@ -16,6 +15,7 @@ import { Suspense } from "react";
  */
 export const UserInfoPage = () => {
   const userData = useUserHook() as UserContextType;
+  console.log("userData", userData);
   if (!userData?.loggedInUser) {
     return (
       <div>
@@ -33,7 +33,7 @@ export const UserInfoPage = () => {
         break;
       case AccountType.seller:
         welcomeMessage =
-          "Welcome to the shopping cart. Please start listing items.";
+          "Welcome to the shopping cart. Please start listing items. Click here";
         break;
       default:
         break;
@@ -41,7 +41,7 @@ export const UserInfoPage = () => {
     return (
       <div>
         <Suspense fallback={<div>Loading...</div>}>
-          <p>{welcomeMessage}</p>
+          <Link to="/product-list">{welcomeMessage}</Link>
         </Suspense>
       </div>
     );
