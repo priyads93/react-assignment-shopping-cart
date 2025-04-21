@@ -2,6 +2,7 @@ import { DataScroller } from "primereact/datascroller";
 import { Card } from "primereact/card";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ReactNode } from "react";
+import { ErrorComponent } from "./error-component";
 
 /**
  * A generic React component that renders a list of items using a provided template.
@@ -33,11 +34,11 @@ export const ListComponent = <T,>({
 }) => {
   const { data, isLoading, isError, error } = listQuery;
   if (isLoading) {
-    return <span>Loading...</span>;
+    return <span aria-live="polite">Loading...</span>;
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>;
+    return <ErrorComponent errorMessage={error.message}/>;
   }
 
   return (

@@ -12,26 +12,12 @@ const getInventoryAndSeverityData = (
   severity: "success" | "warning" | "danger" | null;
 } => {
   if (product.quantity === 0) {
-    return {
-      inventoryStatus: "Out Of Stock",
-      severity: "danger",
-    };
-  } else if (product.quantity < 2) {
-    return {
-      inventoryStatus: "Low Stock",
-      severity: "warning",
-    };
-  } else if (product.quantity > 2) {
-    return {
-      inventoryStatus: "In Stock",
-      severity: "success",
-    };
-  } else {
-    return {
-      inventoryStatus: "",
-      severity: null,
-    };
+    return { inventoryStatus: "Out Of Stock", severity: "danger" };
   }
+  if (product.quantity < 2) {
+    return { inventoryStatus: "Low Stock", severity: "warning" };
+  }
+  return { inventoryStatus: "In Stock", severity: "success" };
 };
 
 /**

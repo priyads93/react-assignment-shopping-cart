@@ -46,6 +46,7 @@ export const InputTextAreaComponent = <T extends FieldValues>({
       <InputTextarea
         aria-invalid={errors?.[fieldName] ? "true" : "false"}
         aria-label={fieldName}
+        aria-describedby={errors?.[fieldName] ? `${fieldName}-error` : undefined}  
         id={fieldName}
         {...register(fieldName)}
         rows={rows ?? 5}

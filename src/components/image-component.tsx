@@ -17,7 +17,7 @@ export const ImageComponent = ({
   src,
   width,
   height,
-  loading
+  loading = "lazy"
 }: {
   src: string;
   width: string;
