@@ -54,15 +54,15 @@ export const App = () => {
             }
             path="/product-list"
           />
+          <Route
+            element={
+              <Layout>
+                <NotFoundPage />
+              </Layout>
+            }
+            path="*"
+          />
         </Routes>
-        <Route
-          element={
-            <Layout>
-              <NotFoundPage />
-            </Layout>
-          }
-          path="*"
-        />
       </BrowserRouter>
     </>
   );
