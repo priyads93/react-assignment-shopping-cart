@@ -5,7 +5,6 @@ import { InputTextComponent } from "../components/input-text-component";
 import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { ButtonComponent } from "../components/button-component";
-import { Link } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Product, ProductCategory } from "../services/interface";
 import { Card } from "primereact/card";
@@ -14,6 +13,7 @@ import { InputNumberComponent } from "../components/input-number-component";
 import { InputSelectComponent } from "../components/input-select-component";
 import { InputTextAreaComponent } from "../components/input-text-area-component";
 import { useCreateProduct } from "../services/product-service";
+import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-component";
 
 const schema = yup.object({
   name: yup.string().required("You must enter product name"),
@@ -66,14 +66,7 @@ export const CreateProductForm = () => {
   const { mutateAsync } = useCreateProduct();
   const queryClient = useQueryClient();
   if (!userData?.loggedInUser?.userId) {
-    return (
-      <div>
-        <h2>You are unauthorized</h2>
-        <Link aria-label="Go to the login page" to="/login">
-          Please Login To Continue
-        </Link>
-      </div>
-    );
+    return <UnAuthorizedLoginComponent />;
   }
 
   const onSubmit = async (data: CreateProductFormValues) => {
@@ -85,7 +78,7 @@ export const CreateProductForm = () => {
     mutateAsync(transformedData, {
       onSuccess: (response: Product) => {
         if (response) {
-          queryClient.invalidateQueries({ queryKey: ["products"] });
+          queryClient.invalidateQueries({ queryKey: ["getProducts"] });
           toast(<ToastComponent title="Product Created Successfully" />);
         } else {
           throw new Error("Product creation failed");

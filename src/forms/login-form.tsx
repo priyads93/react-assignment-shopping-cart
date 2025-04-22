@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse } from "../services/interface";
 import { Card } from "primereact/card";
+import { UserContextType, useUserHook } from "../context/user-context";
 
 const schema = yup.object({
   email: yup
@@ -61,13 +62,14 @@ export const LoginForm = () => {
   const { mutateAsync } = useLogin();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { login } = useUserHook() as UserContextType;
 
   const onSubmit = async (data: LoginFormValues) => {
     mutateAsync(data, {
       onSuccess: (response: AuthResponse) => {
         if (response.access_token) {
-          storage.setToken(response.access_token);
           queryClient.setQueryData(["user"], response.user);
+          login(response.user, response.access_token);
           toast(<ToastComponent title="Logged In Successfully" />);
           navigate("/user");
         } else {

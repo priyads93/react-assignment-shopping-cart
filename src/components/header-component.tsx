@@ -7,7 +7,7 @@ import { SwitchThemeComponent } from "./toggle-button-component";
 import { MenuItem } from "primereact/menuitem";
 import { SplitButtonComponent } from "./split-button-component";
 import { MenuBarComponent } from "./menu-bar-component";
-import { logout } from "../services/auth-service";
+import { UserContextType, useUserHook } from "../context/user-context";
 
 /**
  * Header component that displays the main navigation bar for the application.
@@ -22,12 +22,14 @@ import { logout } from "../services/auth-service";
 export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { logout } = useUserHook() as UserContextType;
 
   const user: User | undefined = queryClient.getQueryData(["user"]);
   const handleLogout = () => {
     try {
       toast(<ToastComponent title="You are logged out from the app" />);
-      logout(queryClient);
+      queryClient.setQueryData(["user"], null);
+      logout();
       navigate("/login");
     } catch (error) {
       console.log("error", error);

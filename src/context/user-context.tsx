@@ -2,16 +2,34 @@ import {
   createContext,
   ReactNode,
   useContext,
+  useEffect,
   useState,
 } from "react";
-import { UserResponse } from "../services/interface";
+import { User, UserResponse } from "../services/interface";
+import { storage } from "../services/session-utils";
 
 export type UserContextType = {
   loggedInUser: UserResponse | null;
   setLoggedInUser: React.Dispatch<React.SetStateAction<UserResponse | null>>;
+  login: (user: UserResponse, token: string) => void;
+  logout: () => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+/**
+ * Retrieves the initial state for the user context.
+ *
+ * This function checks the `sessionStorage` for an item with the key `"loggedInUser"`.
+ * If the item exists, it parses the JSON string and returns the corresponding object.
+ * If the item does not exist, it returns `null`.
+ *
+ * @returns {object | null} The parsed user object if found in `sessionStorage`, otherwise `null`.
+ */
+const getInitialState = () => {
+  const loggedInUser = sessionStorage.getItem("loggedInUser");
+  return loggedInUser ? JSON.parse(loggedInUser) : null;
+};
 
 interface Props {
   children?: ReactNode;
@@ -25,13 +43,34 @@ interface Props {
  * @param {React.ReactNode} props.children - The child components that will have access
  * to the `UserContext`.
  *
- * @returns {JSX.Element} 
+ * @returns {JSX.Element}
  */
 export const UserProvider = ({ children }: Props) => {
-  const [loggedInUser, setLoggedInUser] = useState<UserResponse | null>(null);
- 
+  const [loggedInUser, setLoggedInUser] = useState<UserResponse | null>(
+    getInitialState()
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+  }, [loggedInUser]);
+
+  const login = (user: UserResponse, token: string) => {
+    setLoggedInUser(user);
+    storage.setUser(user);
+    storage.setToken(token);
+  };
+
+  const logout = () => {
+    setLoggedInUser(null);
+    storage.clearToken();
+    storage.clearUser();
+    storage.clearTokenInLocalStorage();
+  };
+
   return (
-    <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
+    <UserContext.Provider
+      value={{ loggedInUser, setLoggedInUser, login, logout }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -53,4 +92,4 @@ export const useUserHook = () => {
     throw new Error("useUserHook must be used within a UserProvider");
   }
   return context;
-}
+};

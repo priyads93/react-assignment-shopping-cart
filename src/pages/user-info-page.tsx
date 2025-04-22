@@ -2,6 +2,7 @@ import { UserContextType, useUserHook } from "../context/user-context";
 import { Link } from "react-router";
 import { AccountType } from "../services/interface";
 import { Suspense } from "react";
+import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-component";
 
 /**
  * The `UserInfoPage` component renders a user-specific page based on their login status and account type.
@@ -15,25 +16,16 @@ import { Suspense } from "react";
  */
 export const UserInfoPage = () => {
   const userData = useUserHook() as UserContextType;
-  console.log("userData", userData);
   if (!userData?.loggedInUser) {
-    return (
-      <div>
-        <h2>You are unauthorized</h2>
-        <Link aria-label="Go to the login page" to="/login">
-          Please Login
-        </Link>
-      </div>
-    );
+    return <UnAuthorizedLoginComponent />;
   } else {
-    let welcomeMessage = "Welcome";
+    let welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome`;
     switch (userData?.loggedInUser.accountType) {
       case AccountType.buyer:
-        welcomeMessage = "Welcome to the shopping cart. Lets start shopping.";
+        welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome to the shopping cart. Lets start shopping.`;
         break;
       case AccountType.seller:
-        welcomeMessage =
-          "Welcome to the shopping cart. Please start listing items. Click here";
+        welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome to the shopping cart. Please start listing items. Click here`;
         break;
       default:
         break;

@@ -1,20 +1,22 @@
 import { ButtonComponent } from "./button-component";
 import { RatingComponent } from "./rating-component";
 import { TagComponent } from "./tag-component";
-import { Product } from "../services/interface";
+import { AccountType, Product, UserResponse } from "../services/interface";
 import { ReactNode } from "react";
 import { ImageComponent } from "./image-component";
+import { UnAuthorizedLoginComponent } from "./unauthorized-login-component";
+import { useQueryClient } from "@tanstack/react-query";
 
 const getInventoryAndSeverityData = (
-  product: Product
+  quantity: number
 ): {
   inventoryStatus: string;
   severity: "success" | "warning" | "danger" | null;
 } => {
-  if (product.quantity === 0) {
+  if (quantity === 0) {
     return { inventoryStatus: "Out Of Stock", severity: "danger" };
   }
-  if (product.quantity < 2) {
+  if (quantity < 2) {
     return { inventoryStatus: "Low Stock", severity: "warning" };
   }
   return { inventoryStatus: "In Stock", severity: "success" };
@@ -27,79 +29,54 @@ const getInventoryAndSeverityData = (
  * @returns {ReactNode} A ReactNode representing the product item template.
  *
  */
-export const ProductItemTemplate = ({
-  imageUrl,
-  name,
-  description,
-  rating,
-  price,
-  quantity,
-  categoryType,
-  userId,
-}: Product): ReactNode => {
+export const ProductItemTemplate = (
+  {
+    imageUrl,
+    name,
+    description,
+    rating,
+    price,
+    quantity,
+    categoryType,
+    userId,
+  }: Product,
+  { accountType }: UserResponse
+): ReactNode => {
+  if (!userId) {
+    return <UnAuthorizedLoginComponent />;
+  }
   return (
     <div id="list-item" className="list-item">
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignContent: "center",
-          padding: "0.5rem",
-        }}
-      >
+      <div id="list-item-image" className="list-item-image">
         <ImageComponent height="60" width="60" loading="lazy" src={imageUrl} />
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexGrow: 1,
-          flexDirection: "column",
-          alignItems: "flex-start",
-          padding: "0.5rem",
-        }}
-      >
+      <div className="list-item-details">
         <h3 style={{ margin: "0" }}>{name}</h3>
         <p>{description}</p>
         <RatingComponent rating={rating} />
-        <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            margin: "0.5rem 0.5rem 0.5rem 0",
-          }}
-        >
+        <span className="list-item-category">
           <i className="pi pi-tag product-category-icon" />
           <span>{categoryType}</span>
         </span>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          padding: "0.5rem",
-        }}
-      >
+      <div className="list-item-button">
         <span>${price}</span>
-        <ButtonComponent
-          icon="pi pi-shopping-cart"
-          buttonLabel="Add to Cart"
-          disabled={quantity === 0}
-          type="submit"
-        />
-        <TagComponent
-          data={getInventoryAndSeverityData({
-            imageUrl,
-            quantity,
-            rating,
-            name,
-            categoryType,
-            description,
-            price,
-            userId,
-          })}
-        />
+        {accountType === AccountType.seller && (
+          <ButtonComponent
+            buttonLabel="Update Item"
+            disabled={false}
+            type="submit"
+          />
+        )}
+        {accountType === AccountType.buyer && (
+          <ButtonComponent
+            icon="pi pi-shopping-cart"
+            buttonLabel="Add to Cart"
+            disabled={quantity === 0}
+            type="submit"
+          />
+        )}
+        <TagComponent data={getInventoryAndSeverityData(quantity)} />
       </div>
     </div>
   );

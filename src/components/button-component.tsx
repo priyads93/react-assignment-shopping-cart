@@ -16,13 +16,13 @@ export const ButtonComponent = ({
   buttonLabel,
   type,
   onClick,
-  icon
+  icon,
 }: {
   disabled: boolean;
   buttonLabel: string;
   type: "submit" | "button";
   onClick?: () => void;
-  icon?: string
+  icon?: string;
 }) => {
   return (
     <Button

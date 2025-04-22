@@ -1,8 +1,18 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { LoginFormValues } from "../forms/login-form";
-import { callPostMethod } from "./api-service";
+import { callGetMethod, callPostMethod } from "./api-service";
 import { User } from "./interface";
 import { storage } from "./session-utils";
+
+export const getMe = () => {
+  return useQuery({
+    queryKey: ["getUser"],
+    queryFn: () =>
+      callGetMethod(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, {
+        Authorization: `Bearer ${storage.getToken()}`,
+      }),
+  });
+};
 
 /**
  * Sends a POST request to the authentication endpoint to log in a user
@@ -38,15 +48,3 @@ export const useRegister = () => {
       }),
   });
 };
-
-/**
- * Logs out the current user by clearing the user data from the query cache
- * and removing the authentication token from storage.
- *
- * @param queryClient - The QueryClient instance used to manage and cache server state.
- * @returns void
- */
-export function logout(queryClient: QueryClient): void {
-  queryClient.setQueryData(["user"], null);
-  return storage.clearToken();
-}

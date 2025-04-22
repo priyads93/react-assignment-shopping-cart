@@ -65,3 +65,39 @@ export async function callGetMethod(
   });
   return handleApiResponse(response);
 }
+
+/**
+ * Sends an HTTP PATCH request to the specified URL with the provided data, headers, and path parameters.
+ *
+ * @param url - The base URL to which the PATCH request will be sent.
+ * @param data - The payload to be sent in the body of the PATCH request.
+ * @param headers - An object containing key-value pairs of headers to include in the request.
+ * @param pathParams - An object containing key-value pairs of path parameters to append to the URL.
+ *                     Each key-value pair will be appended as `/value` to the URL.
+ * @returns A promise that resolves to the response of the API call after being processed by `handleApiResponse`.
+ *
+ * @throws Will throw an error if the `fetch` request fails or if `handleApiResponse` encounters an issue.
+ */
+export async function callPatchMethod(
+  url: string,
+  data: unknown,
+  headers: Record<string, string>,
+  pathParams: Record<string, string>
+) {
+  if (pathParams) {
+    const pathString = Object.keys(pathParams).reduce(
+      (acc: string, currValue: string) => {
+        acc = acc + `/${pathParams[currValue]}`;
+        return acc;
+      },
+      ""
+    );
+    url = `${url}${pathString}`;
+  }
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(data),
+  });
+  return handleApiResponse(response);
+}
