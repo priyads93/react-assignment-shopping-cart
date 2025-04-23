@@ -1,63 +1,135 @@
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useState } from "react";
 import { ListComponent } from "../components/list-component";
 import { useGetProducts } from "../services/product-service";
 import { ProductItemTemplate } from "../components/product-item-template";
-import { AccountType, Product, UserResponse } from "../services/interface";
+import {
+  AccountType,
+  ProductResponse,
+  UserResponse,
+} from "../services/interface";
 import { ButtonComponent } from "../components/button-component";
-import { CreateProductForm } from "../forms/create-product-form";
+import { ProductForm } from "../forms/product-form";
 import DialogComponent from "../components/dialog-component";
-import { UserContextType, useUserHook } from "../context/user-context";
 import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-component";
+import { ErrorComponent } from "../components/error-component";
+import { UserContextType, useUserHook } from "../context/user-context";
+import { toast } from "react-toastify";
+import { ToastComponent } from "../components/toast-component";
+import { isUserDataValid } from "../utils/isUserDataValid";
 
 export const ProductsPage = () => {
-  const [visible, setVisible] = useState(false);
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [productSelected, setProductSelected] = useState<
+    ProductResponse | undefined
+  >(undefined);
 
-  const handleSetVisible = useCallback(() => {
-    setVisible(false);
-  }, []);
-  const userData = useUserHook() as UserContextType;
-  if (!userData?.loggedInUser || !userData.loggedInUser.userId) {
+  const {
+    loggedInUser: userData,
+    setCartItems,
+    cartItems,
+  } = useUserHook() as UserContextType;
+
+  if (!isUserDataValid(userData)) {
     return <UnAuthorizedLoginComponent />;
   }
+
+  const userIdForRetrievingProducts =
+    userData.accountType === AccountType.seller
+      ? userData.userId.toString()
+      : "";
+  const getProducts = useGetProducts(userIdForRetrievingProducts);
+  if (getProducts.isLoading) {
+    return <span aria-live="polite">Loading...</span>;
+  }
+
+  if (getProducts.isError) {
+    return <ErrorComponent errorMessage={`${getProducts.error?.message}`} />;
+  }
+
+  const handleSetVisible = () => {
+    setIsDialogVisible(false);
+  };
+
+  const handleUpdateButtonClick = (productId: number) => {
+    setIsEditMode(true);
+    setIsDialogVisible(true);
+    setProductSelected(
+      getProducts?.data?.find(
+        (item: ProductResponse) => item.productId === productId
+      )
+    );
+  };
+
+  const handleAddToCartClick = (productId: number) => {
+    try {
+      const alreadyExisting = cartItems?.find(
+        (cartItem) => cartItem.productId === productId
+      );
+      if (alreadyExisting) {
+        setCartItems(
+          cartItems.map((cartItem) => {
+            if (cartItem.productId === productId) {
+              cartItem.quantity += 1;
+            }
+            return cartItem;
+          })
+        );
+      } else {
+        setCartItems([
+          ...cartItems,
+          { productId, quantity: 1, userId: userData.userId },
+        ]);
+      }
+      toast(
+        <ToastComponent title="Added Items To The Cart. Please proceed to cart page for checkout" />
+      );
+      console.log(cartItems);
+    } catch (error) {
+      toast(
+        <ToastComponent
+          text={error as string}
+          title="Error while adding item to the cart"
+        />
+      );
+      console.error(error);
+    }
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div id="product-list" className="product-list">
-        {userData.loggedInUser.accountType === AccountType.seller && (
+      <div className="product-list" id="product-list">
+        {userData.accountType === AccountType.seller ? (
           <>
             <ButtonComponent
-              type="button"
               buttonLabel="Create Product"
-              icon="pi pi-external-link"
               disabled={false}
-              onClick={() => setVisible(true)}
+              icon="pi pi-external-link"
+              onClick={() => setIsDialogVisible(true)}
+              type="button"
             />
             <DialogComponent
-              header="Create Product"
-              visible={visible}
               handleSetVisible={handleSetVisible}
+              header={isEditMode ? "Update Product" : "Create Product"}
+              isVisible={isDialogVisible}
             >
-              <CreateProductForm />
+              <ProductForm product={isEditMode ? productSelected : undefined} />
             </DialogComponent>
           </>
-        )}
+        ) : null}
+
         <ListComponent
-          itemTemplate={(item: Product) =>
-            ProductItemTemplate(item, userData.loggedInUser as UserResponse)
-          }
-          listQuery={useGetProducts(
-            userData.loggedInUser.accountType === AccountType.seller
-              ? userData.loggedInUser.userId.toString()
-              : ""
-          )}
+          data={getProducts.data}
           emptyMessage="No Products, Click on create product to start listing them"
+          footer={<></>}
           header="List Of Products"
-          footer={
-            <ButtonComponent
-              type="button"
-              buttonLabel="Load"
-              icon="pi pi-plus"
-              disabled={false}
-            ></ButtonComponent>
+          itemTemplate={(item: ProductResponse) =>
+            ProductItemTemplate(
+              item,
+              userData as UserResponse,
+              handleUpdateButtonClick,
+              handleAddToCartClick
+            )
           }
         />
       </div>

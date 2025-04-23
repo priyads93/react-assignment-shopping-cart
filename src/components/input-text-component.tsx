@@ -56,7 +56,7 @@ export const InputTextComponent = <T extends FieldValues>({
 
   const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <InputText
         aria-invalid={errors?.[fieldName] ? "true" : "false"}

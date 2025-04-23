@@ -128,8 +128,8 @@ export const RegistrationForm = () => {
   return (
     <Card title="Registration Form">
       <form
-        id="form"
         className="form"
+        id="form"
         noValidate
         onSubmit={handleSubmit(onSubmit, onError)}
       >
@@ -146,35 +146,35 @@ export const RegistrationForm = () => {
           type="email"
         />
         <PasswordComponent
+          control={control}
           errors={errors}
           fieldName="password"
-          control={control}
         />
         <InputNumberComponent
+          control={control}
           errors={errors}
           fieldName="age"
-          control={control}
           min={18}
           mode="decimal"
         />
         <InputSelectComponent
+          control={control}
           errors={errors}
           fieldName="gender"
           options={Object.values(Gender)}
-          control={control}
         />
         <InputSelectComponent
+          control={control}
           errors={errors}
           fieldName="accountType"
           options={Object.values(AccountType)}
-          control={control}
         />
         <PhoneNumberComponent
           control={control}
           errors={errors}
           fieldName="phoneNumber"
         />
-        <div id="inputGroup" className="inputGroup">
+        <div className="inputGroup" id="inputGroup">
           <input
             aria-label="Accept Terms and Conditions"
             {...register("termsAndConditions")}

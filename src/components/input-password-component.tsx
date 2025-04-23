@@ -31,7 +31,7 @@ export const PasswordComponent = <T extends FieldValues>({
 }: InputTextProps<T>) => {
   const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <Controller
         control={control}
@@ -40,13 +40,13 @@ export const PasswordComponent = <T extends FieldValues>({
           <Password
             aria-invalid={errors?.[fieldName] ? "true" : "false"}
             aria-label={fieldName}
+            feedback={false}
             id={fieldName}
             inputId={fieldName}
             variant="filled"
-            feedback={false}
             {...field}
-            toggleMask
             invalid={errorMessage ? true : false}
+            toggleMask
           />
         )}
       />

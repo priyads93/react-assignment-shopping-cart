@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { User, UserResponse } from "../services/interface";
+import { CartItem, UserResponse } from "../services/interface";
 import { storage } from "../services/session-utils";
 
 export type UserContextType = {
@@ -13,6 +13,8 @@ export type UserContextType = {
   setLoggedInUser: React.Dispatch<React.SetStateAction<UserResponse | null>>;
   login: (user: UserResponse, token: string) => void;
   logout: () => void;
+  cartItems: CartItem[];
+  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -49,6 +51,7 @@ export const UserProvider = ({ children }: Props) => {
   const [loggedInUser, setLoggedInUser] = useState<UserResponse | null>(
     getInitialState()
   );
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     sessionStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
@@ -65,11 +68,21 @@ export const UserProvider = ({ children }: Props) => {
     storage.clearToken();
     storage.clearUser();
     storage.clearTokenInLocalStorage();
+    setCartItems([]);
   };
+
+  
 
   return (
     <UserContext.Provider
-      value={{ loggedInUser, setLoggedInUser, login, logout }}
+      value={{
+        loggedInUser,
+        setLoggedInUser,
+        login,
+        logout,
+        cartItems,
+        setCartItems,
+      }}
     >
       {children}
     </UserContext.Provider>

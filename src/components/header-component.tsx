@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { ToastComponent } from "./toast-component";
-import { User } from "../services/interface";
+import { AccountType, UserResponse } from "../services/interface";
 import { useQueryClient } from "@tanstack/react-query";
 import { SwitchThemeComponent } from "./toggle-button-component";
 import { MenuItem } from "primereact/menuitem";
@@ -22,9 +22,9 @@ import { UserContextType, useUserHook } from "../context/user-context";
 export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { logout } = useUserHook() as UserContextType;
+  const { logout, loggedInUser } = useUserHook() as UserContextType;
 
-  const user: User | undefined = queryClient.getQueryData(["user"]);
+  const user: UserResponse | null = loggedInUser;
   const handleLogout = () => {
     try {
       toast(<ToastComponent title="You are logged out from the app" />);
@@ -72,12 +72,22 @@ export const Header = () => {
     },
   ];
 
+  const handleCartIconClick = () => {
+    navigate("/cart");
+  };
+
   return (
-    <div id="header" className="header">
+    <div className="header" id="header">
       <MenuBarComponent
-        id="menubar"
         end={
           <div style={{ display: "flex", gap: "1rem" }}>
+            {user?.accountType === AccountType.buyer ? (
+              <i
+                className="pi pi-shopping-cart"
+                onClick={handleCartIconClick}
+                style={{ fontSize: '2.5rem' }}
+              />
+            ) : null}
             <SplitButtonComponent
               label="Account Settings"
               menuItems={userMenuItems}
@@ -90,6 +100,7 @@ export const Header = () => {
             <SwitchThemeComponent />
           </div>
         }
+        id="menubar"
         menuItems={menuItems}
       />
     </div>

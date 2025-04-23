@@ -41,17 +41,17 @@ export const InputTextAreaComponent = <T extends FieldValues>({
 }: InputTextProps<T>) => {
   const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <InputTextarea
+        aria-describedby={errors?.[fieldName] ? `${fieldName}-error` : undefined}
         aria-invalid={errors?.[fieldName] ? "true" : "false"}
-        aria-label={fieldName}
-        aria-describedby={errors?.[fieldName] ? `${fieldName}-error` : undefined}  
+        aria-label={fieldName}  
         id={fieldName}
         {...register(fieldName)}
-        rows={rows ?? 5}
         cols={cols ?? 30}
         invalid={errorMessage ? true : false}
+        rows={rows ?? 5}
       />
 
       {errors?.[fieldName]?.message ? (

@@ -38,7 +38,7 @@ export const InputNumberComponent = <T extends FieldValues>({
 }: InputNumberProps<T>) => {
   const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <Controller
         control={control}
@@ -47,16 +47,16 @@ export const InputNumberComponent = <T extends FieldValues>({
           <InputNumber
             aria-invalid={errors?.[fieldName] ? "true" : "false"}
             aria-label={fieldName}
+            currency={currencyCode}
             id={fieldName}
             inputId={fieldName}
-            onChange={(event) => field.onChange(event.value)}
-            value={field.value}
-            mode={mode}
-            showButtons
-            min={min}
-            max={max}
-            currency={currencyCode}
             invalid={errorMessage ? true : false}
+            max={max}
+            min={min}
+            mode={mode}
+            onChange={(event) => field.onChange(event.value)}
+            showButtons
+            value={field.value}
           />
         )}
       />

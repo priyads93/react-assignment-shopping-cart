@@ -60,10 +60,10 @@ export const SwitchThemeComponent = () => {
 
   return (
     <ToggleButton
-      onLabel="Dark Mode"
-      offLabel="Light Mode"
       checked={darkMode}
+      offLabel="Light Mode"
       onChange={(e) => handleToggle(e)}
-    ></ToggleButton>
+      onLabel="Dark Mode"
+     />
   );
 };

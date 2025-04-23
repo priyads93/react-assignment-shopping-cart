@@ -38,7 +38,7 @@ export const InputSelectComponent = <T extends FieldValues>({
   options,
 }: InputSelectProps<T>): React.JSX.Element => {
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <Controller
         control={control}
@@ -46,9 +46,9 @@ export const InputSelectComponent = <T extends FieldValues>({
         render={({ field: { onChange, value } }) => (
           <Dropdown
             highlightOnSelect
-            options={options}
             id={fieldName}
             onChange={onChange}
+            options={options}
             value={value}
           />
         )}

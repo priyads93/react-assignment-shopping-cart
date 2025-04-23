@@ -1,5 +1,6 @@
 // routes.tsx
 
+import { CartPage } from "./pages/cart-page";
 import { HomePage } from "./pages/home-page";
 import { LoginPage } from "./pages/login-page";
 import { NotFoundPage } from "./pages/not-found-page";
@@ -14,5 +15,6 @@ export const routes = [
   { path: "/register", element: <RegistrationPage /> },
   { path: "/user", element: <UserInfoPage /> },
   { path: "/product-list", element: <ProductsPage /> },
+  { path: "/cart", element: <CartPage /> },
   { path: "*", element: <NotFoundPage /> },
 ];

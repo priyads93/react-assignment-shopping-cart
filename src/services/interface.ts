@@ -45,6 +45,8 @@ export interface User {
 
 export interface UserResponse extends User {
   userId: number;
+  products: Product[];
+  orders: Order[];
 }
 
 /**
@@ -111,7 +113,7 @@ export enum ProductCategory {
  * @property {number} price - The price of the product.
  * @property {number} quantity - The available quantity of the product.
  * @property {ProductCategory} categoryType - The category to which the product belongs.
- * @property {number} userId - The ID of the user associated with the product.
+ * @property {number} userUserId - The ID of the user associated with the product.
  * @property {string} imageUrl - The URL of the product's image.
  * @property {number} rating - The rating for the product.
  */
@@ -121,7 +123,58 @@ export interface Product {
   price: number;
   quantity: number;
   categoryType: ProductCategory;
-  userId: number;
+  userUserId: number;
   imageUrl: string;
   rating?: number;
+}
+
+export interface ProductResponse {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  categoryType: ProductCategory;
+  userUserId: number;
+  imageUrl: string;
+  rating?: number;
+  productId: number;
+}
+
+export enum PaymentMode {
+  ONLINE = "online",
+  OFFLINE = "offline",
+}
+
+export enum OrderStatus {
+  CANCELLED = "cancelled",
+  SUCCESSFUL = "successful",
+  CREATED = "created",
+}
+
+export interface Order {
+  description: string;
+  totalCost: number;
+  quantity: number;
+  paymentMode: PaymentMode;
+  orderStatus: OrderStatus;
+  userUserId: number;
+  productId: string;
+}
+
+export interface OrderResponse {
+  description: string;
+  totalCost: number;
+  quantity: number;
+  paymentMode: PaymentMode;
+  orderStatus: OrderStatus;
+  userUserId: string;
+  products: ProductResponse[];
+  user: User;
+  orderId: number;
+}
+
+export interface CartItem {
+  productId: number;
+  userId: number;
+  quantity: number;
 }

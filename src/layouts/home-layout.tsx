@@ -14,7 +14,7 @@ import { Footer } from "../components/footer-component";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const user: UserResponse | undefined = queryClient.getQueryData(["user"]);
-  const { loggedInUser, setLoggedInUser } =
+  const { setLoggedInUser } =
     (useUserHook() as UserContextType) || {
       loggedInUser: null,
       setLoggedInUser: () => {},
@@ -24,9 +24,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div id="layout" className="layout">
+    <div className="layout" id="layout">
       <Header />
-      <div id="body" className="body">
+      <div className="body" id="body">
         {children}
       </div>
       <Footer />

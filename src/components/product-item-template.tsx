@@ -1,11 +1,14 @@
 import { ButtonComponent } from "./button-component";
 import { RatingComponent } from "./rating-component";
 import { TagComponent } from "./tag-component";
-import { AccountType, Product, UserResponse } from "../services/interface";
+import {
+  AccountType,
+  ProductResponse,
+  UserResponse,
+} from "../services/interface";
 import { ReactNode } from "react";
 import { ImageComponent } from "./image-component";
 import { UnAuthorizedLoginComponent } from "./unauthorized-login-component";
-import { useQueryClient } from "@tanstack/react-query";
 
 const getInventoryAndSeverityData = (
   quantity: number
@@ -38,17 +41,27 @@ export const ProductItemTemplate = (
     price,
     quantity,
     categoryType,
-    userId,
-  }: Product,
-  { accountType }: UserResponse
+    userUserId,
+    productId,
+  }: ProductResponse,
+  { accountType }: UserResponse,
+  handleUpdateClick: (productId: number) => void,
+  handleAddToCartClick: (productId: number) => void
 ): ReactNode => {
-  if (!userId) {
+  if (!userUserId) {
     return <UnAuthorizedLoginComponent />;
   }
+  function handleUpdateButtonClick() {
+    handleUpdateClick(productId);
+  }
+
+  function handleAddToCartButtonClick() {
+    handleAddToCartClick(productId);
+  }
   return (
-    <div id="list-item" className="list-item">
-      <div id="list-item-image" className="list-item-image">
-        <ImageComponent height="60" width="60" loading="lazy" src={imageUrl} />
+    <div className="list-item" id={`${productId}`}>
+      <div className="list-item-image" id="list-item-image">
+        <ImageComponent height="60" loading="lazy" src={imageUrl} width="60" />
       </div>
       <div className="list-item-details">
         <h3 style={{ margin: "0" }}>{name}</h3>
@@ -61,21 +74,25 @@ export const ProductItemTemplate = (
       </div>
       <div className="list-item-button">
         <span>${price}</span>
-        {accountType === AccountType.seller && (
+        {accountType === AccountType.seller ? (
           <ButtonComponent
             buttonLabel="Update Item"
             disabled={false}
+            id={`${productId}`}
+            onClick={handleUpdateButtonClick}
             type="submit"
           />
-        )}
-        {accountType === AccountType.buyer && (
+        ) : null}
+        {accountType === AccountType.buyer ? (
           <ButtonComponent
-            icon="pi pi-shopping-cart"
             buttonLabel="Add to Cart"
             disabled={quantity === 0}
+            icon="pi pi-shopping-cart"
+            id={`${productId}`}
+            onClick={handleAddToCartButtonClick}
             type="submit"
           />
-        )}
+        ) : null}
         <TagComponent data={getInventoryAndSeverityData(quantity)} />
       </div>
     </div>

@@ -1,8 +1,6 @@
 import { DataScroller } from "primereact/datascroller";
 import { Card } from "primereact/card";
-import { UseQueryResult } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { ErrorComponent } from "./error-component";
 /**
  * A generic React component that renders a list of items using a provided template.
  * It supports loading, error handling, and customizable headers, footers, and empty messages.
@@ -20,37 +18,26 @@ import { ErrorComponent } from "./error-component";
  */
 export const ListComponent = <T,>({
   itemTemplate,
-  listQuery,
+  data,
   header,
   footer,
   emptyMessage,
 }: {
   itemTemplate: (item: T) => React.ReactNode | undefined;
-  listQuery: UseQueryResult<any, Error>;
+  data: any[] | undefined;
   header: string;
   emptyMessage: string;
   footer: ReactNode;
 }) => {
-  const { data, isLoading, isError, error } = listQuery;
-  if (isLoading) {
-    return <span aria-live="polite">Loading...</span>;
-  }
-
-  if (isError) {
-    return <ErrorComponent errorMessage={error.message} />;
-  }
-
-  
-
   return (
     <Card>
       <DataScroller
-        value={data}
-        itemTemplate={itemTemplate}
-        lazy
         emptyMessage={emptyMessage}
         footer={footer}
         header={header}
+        itemTemplate={itemTemplate}
+        lazy
+        value={data}
       />
     </Card>
   );

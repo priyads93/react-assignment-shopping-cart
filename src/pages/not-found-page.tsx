@@ -5,8 +5,7 @@ export const NotFoundPage = () => {
     <Message
       aria-live="polite"
       severity="error"
-      style={{ color: "red", fontSize: "small", fontStyle: "italic" }}
-      text={"Page Not Found"}
+      text="Page Not Found"
     />
   );
 };

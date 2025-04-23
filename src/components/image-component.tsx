@@ -26,7 +26,7 @@ export const ImageComponent = ({
 }) => {
   return (
     <div>
-      <Image src={src} alt="Image" width={width} height={height} loading={loading} preview></Image>
+      <Image alt="Image" height={height} loading={loading} preview src={src} width={width} />
     </div>
   );
 };

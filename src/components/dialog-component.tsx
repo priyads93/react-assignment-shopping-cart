@@ -11,20 +11,20 @@ import { Dialog } from "primereact/dialog";
 const DialogComponent = ({
   children,
   header,
-  visible,
+  isVisible,
   handleSetVisible,
 }: {
   children: React.ReactNode;
   header: string;
-  visible: boolean;
+  isVisible: boolean;
   handleSetVisible: () => void;
 }) => {
   return (
     <Dialog
       header={header}
-      visible={visible}
-      style={{ width: "50vw" }}
       onHide={handleSetVisible}
+      style={{ width: "50vw" }}
+      visible={isVisible}
     >
       {children}
     </Dialog>

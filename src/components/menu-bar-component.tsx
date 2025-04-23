@@ -24,8 +24,6 @@ export const MenuBarComponent = ({
   end?: React.ReactNode;
 }) => {
   return (
-    <>
-      <Menubar id={id} start={start} end={end} model={menuItems}></Menubar>
-    </>
+    <Menubar end={end} id={id} model={menuItems} start={start} />
   );
 };

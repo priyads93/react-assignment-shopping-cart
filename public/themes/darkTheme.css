@@ -68,6 +68,11 @@
 
 /* Customizations to the designer theme should be defined here */
 @layer primereact {
+  .p-message {
+    color: red;
+    font-size: small;
+    font-style: italic;
+  }
   .p-card {
     background-color: var(--primary-color-text);
     color: var(--primary-color);
@@ -237,6 +242,32 @@
         margin: 0.5rem;
         border-style: groove;
         border-radius: var(--border-radius);
+        .list-item-image {
+          display: flex;
+          flex-wrap: wrap;
+          align-content: center;
+          padding: 0.5rem;
+          border-radius: var(--border-radius);
+        }
+        .list-item-details {
+          display: flex;
+          flex-grow: 1;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 0.5rem;
+        }
+        .list-item-category {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        .list-item-button {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 0.5rem;
+        }
       }
     }
   }
@@ -294,4 +325,3 @@
     }
   }
 }
-

@@ -11,9 +11,9 @@ export const App = () => {
         <Routes>
           {routes.map((route, index) => (
             <Route
+              element={<Layout>{route.element}</Layout>}
               key={index}
               path={route.path}
-              element={<Layout>{route.element}</Layout>}
             />
           ))}
         </Routes>

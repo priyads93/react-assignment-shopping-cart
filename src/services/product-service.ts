@@ -24,15 +24,15 @@ export const useCreateProduct = () => {
  *
  * This hook utilizes a mutation function to send a PATCH request
  * to the API endpoint for updating product details. It includes
- * necessary headers such as `Content-Type` and `Authorization` 
+ * necessary headers such as `Content-Type` and `Authorization`
  * with a bearer token retrieved from storage.
  *
  * @param userId - The ID of the user associated with the product update.
  * @returns A mutation object from `useMutation` to handle the update operation.
  */
-export const useUpdateProduct = (userId: string) => {
+export const useUpdateProduct = (productId: string) => {
   return useMutation({
-    mutationFn: (data: Product) =>
+    mutationFn: (data: Partial<Product>) =>
       callPatchMethod(
         `${import.meta.env.VITE_API_BASE_URL}/products`,
         data,
@@ -40,22 +40,23 @@ export const useUpdateProduct = (userId: string) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${storage.getToken()}`,
         },
-        { userId }
+        { productId }
       ),
   });
 };
 
 /**
- * A custom hook to fetch a list of products from the API.
+ * A custom hook that fetches product data.
  *
- * @param userId - (Optional) The ID of the user to filter products by.
- * @returns The result of the `useQuery` hook, which includes the fetched products and query state.
+ * @param userId - An optional user ID to filter the products by a specific user.
+ * @returns The result of the `useQueries` hook, which includes the data and status of the queries.
  */
 export const useGetProducts = (userId?: string) => {
   const queryParams: Record<string, string> = {};
   if (userId) {
     queryParams["filter"] = JSON.stringify({ userId });
   }
+
   return useQuery({
     queryKey: ["getProducts"],
     queryFn: () =>

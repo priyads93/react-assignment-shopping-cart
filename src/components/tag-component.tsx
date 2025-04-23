@@ -18,5 +18,5 @@ export const TagComponent = ({
     severity: "success" | "warning" | "danger" | null;
   };
 }) => {
-  return <Tag value={data.inventoryStatus} severity={data.severity} rounded></Tag>;
+  return <Tag rounded severity={data.severity} value={data.inventoryStatus} />;
 };

@@ -32,7 +32,7 @@ export const PhoneNumberComponent = <T extends FieldValues>({
   errors,
 }: PhoneNumberInputProps<T>) => {
   return (
-    <div id="inputGroup" className="inputGroup">
+    <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
       <Controller
         control={control}

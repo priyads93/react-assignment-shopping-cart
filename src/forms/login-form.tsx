@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { ButtonComponent } from "../components/button-component";
 import { useLogin } from "../services/auth-service";
-import { storage } from "../services/session-utils";
 import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse } from "../services/interface";
@@ -97,16 +96,16 @@ export const LoginForm = () => {
 
   return (
     <Card
-      title="Login Form"
       footer={
         <Link aria-label="Go to the registration page" to="/register">
           Don't have an account? Sign up here!
         </Link>
       }
+      title="Login Form"
     >
       <form
-        id="form"
         className="form"
+        id="form"
         noValidate
         onSubmit={handleSubmit(onSubmit, onError)}
       >

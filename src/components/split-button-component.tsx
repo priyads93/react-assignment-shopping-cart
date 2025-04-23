@@ -25,13 +25,11 @@ export const SplitButtonComponent = ({
   style?: CSSProperties;
 }) => {
   return (
-    <>
-      <SplitButton
-        menuStyle={menuStyle}
-        style={style}
+    <SplitButton
         label={label}
+        menuStyle={menuStyle}
         model={menuItems}
+        style={style}
       />
-    </>
   );
 };

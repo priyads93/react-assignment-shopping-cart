@@ -8,7 +8,7 @@ import { Panel } from "primereact/panel";
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   return (
-    <div id="footer" className="footer">
+    <div className="footer" id="footer">
       <Panel aria-label="Footer section with copyright information">
         <p>© {currentYear} All rights reserved.</p>
       </Panel>

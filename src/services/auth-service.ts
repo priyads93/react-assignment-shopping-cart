@@ -1,10 +1,10 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { LoginFormValues } from "../forms/login-form";
 import { callGetMethod, callPostMethod } from "./api-service";
 import { User } from "./interface";
 import { storage } from "./session-utils";
 
-export const getMe = () => {
+export const useGetMe = () => {
   return useQuery({
     queryKey: ["getUser"],
     queryFn: () =>

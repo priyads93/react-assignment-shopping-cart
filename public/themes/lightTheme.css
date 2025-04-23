@@ -64,6 +64,11 @@ html {
 
 /* Customizations to the designer theme should be defined here */
 @layer primereact {
+  .p-message {
+    color: red;
+    font-size: small;
+    font-style: italic;
+  }
   .p-card {
     background-color: var(--primary-color-text);
     color: var(--primary-color);

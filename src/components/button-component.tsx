@@ -17,20 +17,24 @@ export const ButtonComponent = ({
   type,
   onClick,
   icon,
+  id,
 }: {
   disabled: boolean;
   buttonLabel: string;
+  id?: string;
   type: "submit" | "button";
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   icon?: string;
+  itemId?: string;
 }) => {
   return (
     <Button
       disabled={disabled}
-      onClick={onClick}
-      type={type}
       icon={icon}
+      id={id}
+      onClick={onClick}
       style={{ marginBottom: "0.5rem", marginTop: "0.5rem" }}
+      type={type}
     >
       {buttonLabel}
     </Button>

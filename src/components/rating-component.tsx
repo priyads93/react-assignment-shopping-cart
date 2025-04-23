@@ -12,7 +12,7 @@ import { Rating } from "primereact/rating";
 export const RatingComponent = ({ rating }: { rating?: number }) => {
   return (
     <div>
-      <Rating value={rating} readOnly cancel={false}></Rating>
+      <Rating cancel={false} readOnly value={rating} />
     </div>
   );
 };
