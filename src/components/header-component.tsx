@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { ToastComponent } from "./toast-component";
 import { AccountType, UserResponse } from "../services/interface";
 import { useQueryClient } from "@tanstack/react-query";
-import { SwitchThemeComponent } from "./toggle-button-component";
+import { SwitchThemeComponent } from "./switch-theme-component";
 import { MenuItem } from "primereact/menuitem";
 import { SplitButtonComponent } from "./split-button-component";
 import { MenuBarComponent } from "./menu-bar-component";

@@ -21,6 +21,7 @@ import {
   useUpdateProduct,
 } from "../services/product-service";
 import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-component";
+import { QUERY_KEYS } from "../utils/queryKeys";
 
 const transformDataForMutation = (
   userId: number,
@@ -154,7 +155,7 @@ export const ProductForm = ({ product }: ProductFormProps) => {
       onSuccess: (response: Product) => {
         const toastTitle = `Product ${product ? "Updated" : "Created"} Successfully`;
         if (response) {
-          queryClient.invalidateQueries({ queryKey: ["getProducts"] });
+          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PRODUCTS] });
           toast(<ToastComponent title={toastTitle} />);
         } else {
           throw new Error(

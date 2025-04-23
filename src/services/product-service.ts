@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
 import { Product } from "./interface";
 import { storage } from "./session-utils";
+import { QUERY_KEYS } from "../utils/queryKeys";
 
 /**
  * Custom hook to create a new product by making a POST request to the API.
@@ -58,7 +59,7 @@ export const useGetProducts = (userId?: string) => {
   }
 
   return useQuery({
-    queryKey: ["getProducts"],
+    queryKey: [QUERY_KEYS.PRODUCTS],
     queryFn: () =>
       callGetMethod(
         `${import.meta.env.VITE_API_BASE_URL}/products`,

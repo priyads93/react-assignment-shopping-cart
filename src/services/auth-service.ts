@@ -3,10 +3,11 @@ import { LoginFormValues } from "../forms/login-form";
 import { callGetMethod, callPostMethod } from "./api-service";
 import { User } from "./interface";
 import { storage } from "./session-utils";
+import { QUERY_KEYS } from "../utils/queryKeys";
 
 export const useGetMe = () => {
   return useQuery({
-    queryKey: ["getUser"],
+    queryKey: [QUERY_KEYS.USER],
     queryFn: () =>
       callGetMethod(`${import.meta.env.VITE_API_BASE_URL}/auth/profile`, {
         Authorization: `Bearer ${storage.getToken()}`,
