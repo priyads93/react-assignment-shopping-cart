@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse } from "../services/interface";
 import { Card } from "primereact/card";
 import { UserContextType, useUserHook } from "../context/user-context";
+import { PasswordComponent } from "../components/input-password-component";
 
 const schema = yup.object({
   email: yup
@@ -56,7 +57,7 @@ export const LoginForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const { register, handleSubmit, formState } = form;
+  const { register, handleSubmit, formState, control } = form;
   const { errors, isDirty, isSubmitting } = formState;
   const { mutateAsync } = useLogin();
   const queryClient = useQueryClient();
@@ -115,11 +116,10 @@ export const LoginForm = () => {
           register={register}
           type="email"
         />
-        <InputTextComponent
+        <PasswordComponent
           errors={errors}
           fieldName="password"
-          register={register}
-          type="password"
+          control={control}
         />
         <ButtonComponent
           buttonLabel="Login"

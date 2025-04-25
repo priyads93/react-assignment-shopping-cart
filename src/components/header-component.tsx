@@ -88,7 +88,8 @@ export const Header = () => {
     ) : null;
 
   const getAccountSettingsLabel = (user: UserResponse | null) =>
-    user ? `Hi ${user.name}, Account Settings` : "Account Settings";
+    user ? `Hi ${user.name}, 
+            Account Settings` : "Account Settings";
 
   const accountSettingsLabel = getAccountSettingsLabel(user);
 
