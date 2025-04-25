@@ -35,9 +35,7 @@ export const ProductsPage = () => {
   }
 
   const userIdForRetrievingProducts =
-    userData.accountType === AccountType.seller
-      ? userData.userId.toString()
-      : "";
+    userData.accountType === AccountType.SELLER ? userData.id.toString() : "";
   const getProducts = useGetProducts(userIdForRetrievingProducts);
   if (getProducts.isLoading) {
     return <span aria-live="polite">Loading...</span>;
@@ -55,9 +53,7 @@ export const ProductsPage = () => {
     setIsEditMode(true);
     setIsDialogVisible(true);
     setProductSelected(
-      getProducts?.data?.find(
-        (item: ProductResponse) => item.productId === productId
-      )
+      getProducts?.data?.find((item: ProductResponse) => item.id === productId)
     );
   };
 
@@ -78,7 +74,7 @@ export const ProductsPage = () => {
       } else {
         setCartItems([
           ...cartItems,
-          { productId, quantity: 1, userId: userData.userId },
+          { productId, quantity: 1, userId: userData.id },
         ]);
       }
       toast(
@@ -99,7 +95,7 @@ export const ProductsPage = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="product-list" id="product-list">
-        {userData.accountType === AccountType.seller ? (
+        {userData.accountType === AccountType.SELLER ? (
           <>
             <ButtonComponent
               buttonLabel="Create Product"

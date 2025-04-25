@@ -1,143 +1,19 @@
-/**
- * Represents a user in the system.
- */
-export interface User {
-  /**
-   * The full name of the user.
-   */
-  name: string;
-
-  /**
-   * The email address of the user.
-   */
-  email: string;
-
-  /**
-   * The password for the user's account.
-   */
-  password: string;
-
-  /**
-   * The age of the user.
-   */
-  age: number;
-
-  /**
-   * The gender of the user.
-   */
-  gender: string;
-
-  /**
-   * The type of account the user has (e.g., admin, regular user).
-   */
-  accountType: string;
-
-  /**
-   * The phone number of the user.
-   */
-  phoneNumber: string;
-
-  /**
-   * Indicates whether the user has accepted the terms and conditions.
-   */
-  termsAndConditions: boolean;
-}
-
-export interface UserResponse extends User {
-  userId: number;
-  products: Product[];
-  orders: Order[];
-}
-
-/**
- * Represents the response received after an authentication request.
- *
- * @interface AuthResponse
- * @property {User} user - The authenticated user's details.
- * @property {string} [access_token] - An optional access token provided upon successful authentication.
- */
-export interface AuthResponse {
-  user: UserResponse;
-  access_token: string;
-}
-
-/**
- * Enum representing the types of accounts in the shopping cart application.
- *
- * @enum {string}
- * @property {string} BUYER - Represents a buyer account type.
- * @property {string} SELLER - Represents a seller account type.
- */
-export enum AccountType {
-  buyer = "buyer",
-  seller = "seller",
-}
-
-/**
- * Enum representing the gender of an individual.
- *
- * @enum {string}
- * @property {string} FEMALE - Represents the female gender.
- * @property {string} MALE - Represents the male gender.
- */
 export enum Gender {
-  female = "female",
-  male = "male",
+  FEMALE = "female",
+  MALE = "male",
 }
 
-/**
- * Enum representing various product categories in the shopping cart application.
- *
- * @enum {string}
- * @property {string} ELECTRONICS - Represents electronic items such as gadgets and devices.
- * @property {string} CLOTHING - Represents clothing items such as shirts, pants, and dresses.
- * @property {string} HOMEAPPLIANCES - Represents home appliances such as refrigerators and microwaves.
- * @property {string} BOOKS - Represents books across various genres and categories.
- * @property {string} SPORTS - Represents sports-related items such as equipment and accessories.
- */
-export enum ProductCategory {
+export enum AccountType {
+  BUYER = "buyer",
+  SELLER = "seller",
+}
+
+export enum CategoryType {
   ELECTRONICS = "electronics",
   CLOTHING = "clothing",
   HOMEAPPLIANCES = "homeAppliances",
   BOOKS = "books",
   SPORTS = "sports",
-}
-
-/**
- * Represents a product in the shopping cart system.
- *
- * @interface Product
- *
- * @property {string} name - The name of the product.
- * @property {string} description - A brief description of the product.
- * @property {number} price - The price of the product.
- * @property {number} quantity - The available quantity of the product.
- * @property {ProductCategory} categoryType - The category to which the product belongs.
- * @property {number} userUserId - The ID of the user associated with the product.
- * @property {string} imageUrl - The URL of the product's image.
- * @property {number} rating - The rating for the product.
- */
-export interface Product {
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  categoryType: ProductCategory;
-  userUserId: number;
-  imageUrl: string;
-  rating?: number;
-}
-
-export interface ProductResponse {
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  categoryType: ProductCategory;
-  userUserId: number;
-  imageUrl: string;
-  rating?: number;
-  productId: number;
 }
 
 export enum PaymentMode {
@@ -151,30 +27,109 @@ export enum OrderStatus {
   CREATED = "created",
 }
 
-export interface Order {
-  description: string;
-  totalCost: number;
-  quantity: number;
-  paymentMode: PaymentMode;
-  orderStatus: OrderStatus;
-  userUserId: number;
-  productId: string;
+export type Address = {
+  fullName: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  stateOrProvince: string;
+  postalCode: string;
+  country: string;
+};
+
+export interface User {
+  name: string;
+  email: string;
+  password: string;
+  age: number;
+  gender: Gender;
+  accountType: AccountType;
+  phoneNumber: string;
+  termsAndConditions: boolean;
 }
 
-export interface OrderResponse {
+export interface UserResponse extends User {
+  id: number;
+  products: ProductResponse[];
+  orders: Order[];
+}
+
+export interface CreateUser extends User {}
+
+export interface UpdateUser
+  extends Omit<User, "accountType" | "termsAndConditions"|"email"> {}
+
+export interface Product {
+  name: string;
   description: string;
-  totalCost: number;
+  price: number;
   quantity: number;
+  categoryType: CategoryType;
+  imageUrl: string;
+  rating: number;
+}
+
+export interface ProductResponse extends Product {
+  id: number;
+  user: UserResponse;
+  userId: number;
+  orderItems: OrderItem[];
+}
+
+export interface CreateProduct extends Product {
+  userId: number;
+  orderItems: { productId: number; quantity: number }[];
+}
+
+export interface UpdateProduct extends Partial<Product> {}
+
+export interface Order {
+  description: string;
   paymentMode: PaymentMode;
   orderStatus: OrderStatus;
-  userUserId: string;
-  products: ProductResponse[];
-  user: User;
-  orderId: number;
+  totalCost: number;
+  address?: Address;
 }
+
+export interface OrderResponse extends Order {
+  id: number;
+  userId: number;
+  user: UserResponse;
+  orderItems: OrderItemResponse[];
+}
+
+export interface CreateOrder extends Order {
+  userId: number;
+  orderItems: Omit<OrderItem, "orderId">[];
+}
+
+export interface UpdateOrder extends Partial<Order> {}
+
+export interface OrderItem {
+  quantity: number;
+  orderId: number;
+  productId: number;
+}
+
+export interface OrderItemResponse extends OrderItem {
+  quantity: number;
+  order: OrderResponse;
+  product: ProductResponse;
+}
+
+export interface CreateOrderItem extends OrderItem {}
+
+export interface UpdateOrderItem
+  extends Omit<OrderItem, "orderId" | "productId"> {}
 
 export interface CartItem {
   productId: number;
   userId: number;
   quantity: number;
+}
+
+export interface AuthResponse {
+  user: UserResponse;
+  access_token: string;
 }

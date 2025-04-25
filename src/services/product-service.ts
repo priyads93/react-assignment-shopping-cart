@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
-import { Product } from "./interface";
+import { CreateProduct, UpdateProduct } from "./interface";
 import { storage } from "./session-utils";
 import { QUERY_KEYS } from "../utils/queryKeys";
 
@@ -12,7 +12,7 @@ import { QUERY_KEYS } from "../utils/queryKeys";
  */
 export const useCreateProduct = () => {
   return useMutation({
-    mutationFn: (data: Product) =>
+    mutationFn: (data: CreateProduct) =>
       callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/products`, data, {
         "Content-Type": "application/json",
         Authorization: `Bearer ${storage.getToken()}`,
@@ -33,7 +33,7 @@ export const useCreateProduct = () => {
  */
 export const useUpdateProduct = (productId: string) => {
   return useMutation({
-    mutationFn: (data: Partial<Product>) =>
+    mutationFn: (data: UpdateProduct) =>
       callPatchMethod(
         `${import.meta.env.VITE_API_BASE_URL}/products`,
         data,

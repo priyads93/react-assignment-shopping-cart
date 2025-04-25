@@ -1,9 +1,7 @@
-import { InputNumber } from "primereact/inputnumber";
 import { CartItem, ProductResponse } from "../services/interface";
 import { ErrorComponent } from "./error-component";
-import { ImageComponent } from "./image-component";
-import { RatingComponent } from "./rating-component";
 import { UnAuthorizedLoginComponent } from "./unauthorized-login-component";
+import ListItemComponent from "./list-item-component";
 
 type CartItemTemplateProps = {
   cartItem: CartItem;
@@ -19,7 +17,7 @@ export const CartItemTemplate = ({
   handleModifyQuantity,
 }: CartItemTemplateProps) => {
   const selectedProduct = products?.find(
-    (product) => product.productId === cartItem.productId
+    (product) => product.id === cartItem.productId
   );
   if (!userId) {
     return <UnAuthorizedLoginComponent />;
@@ -28,42 +26,16 @@ export const CartItemTemplate = ({
     return <ErrorComponent errorMessage="Some of the products are not valid" />;
   }
   return (
-    <div className="list-item">
-      <div className="list-item-image" id="list-item-image">
-        <ImageComponent
-          height="60"
-          loading="lazy"
-          src={selectedProduct.imageUrl}
-          width="60"
-        />
-      </div>
-      <div className="list-item-details">
-        <h3 style={{ margin: "0" }}>{selectedProduct.name}</h3>
-        <p>{selectedProduct.description}</p>
-        <RatingComponent rating={selectedProduct.rating} />
-        <span className="list-item-category">
-          <i className="pi pi-tag product-category-icon" />
-          <span>{selectedProduct.categoryType}</span>
-        </span>
-      </div>
-      <div className="list-item-button">
-        <span>${selectedProduct.price}</span>
-
-        <InputNumber
-          buttonLayout="vertical"
-          decrementButtonIcon="pi pi-minus"
-          incrementButtonIcon="pi pi-plus"
-          onValueChange={(e) =>
-            handleModifyQuantity(
-              selectedProduct.productId,
-              e.value ?? cartItem.quantity
-            )
-          }
-          showButtons
-          style={{ width: "2rem", alignContent:"center" }}
-          value={cartItem.quantity}
-        />
-      </div>
-    </div>
+    <ListItemComponent
+      imageUrl={selectedProduct.imageUrl}
+      name={selectedProduct.name}
+      description={selectedProduct.description}
+      categoryType={selectedProduct.categoryType}
+      rating={selectedProduct.rating}
+      price={selectedProduct.price}
+      quantity={cartItem.quantity}
+      handleModifyQuantity={handleModifyQuantity}
+      id={selectedProduct.id}
+    />
   );
 };

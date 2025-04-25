@@ -1,24 +1,10 @@
 :root {
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
-  --font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: ui-sans-serif;
+  margin: 0;
+  padding: 0;
+  --font-family: ui-sans-serif;
+  --font-size-small: small;
+  --font-size-medium: large;
   --surface-a: #1e1c1c;
   --surface-b: #000000;
   --surface-c: #0f0f0f;
@@ -27,8 +13,11 @@
   --surface-f: #1e1c1c;
   --text-color: #1e1c1c;
   --text-color-secondary: #ebebf5;
-  --primary-color: #741b47;
+  --primary-color: #3b3839;
+  --modal-background-color: #0f1551;
   --primary-color-text: #ffffff;
+  --secondary-color: #0b4f8d;
+  --secondary-header: #192f6e;
   --surface-0: #ffffff;
   --surface-50: #fafafa;
   --surface-100: #f4f4f5;
@@ -66,6 +55,15 @@
   color-scheme: dark;
 }
 
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+
 /* Customizations to the designer theme should be defined here */
 @layer primereact {
   .p-message {
@@ -73,9 +71,21 @@
     font-size: small;
     font-style: italic;
   }
-  .p-card {
+  .p-overlaypanel {
     background-color: var(--primary-color-text);
     color: var(--primary-color);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    text-align: center;
+    font-size: medium;
+    border: outset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .p-card {
+    background-color: var(--secondary-color);
+    color: var(--primary-color-text);
     border-radius: var(--border-radius);
     padding: 2rem;
     text-align: center;
@@ -115,8 +125,8 @@
     margin: 0;
     padding: 0;
     .body {
-      background-color: var(--primary-color-text);
-      color: var(--primary-color);
+      background-color: var(--secondary-color);
+      color: var(--primary-color-text);
       border-radius: var(--border-radius);
       flex-grow: 1;
       display: flex;
@@ -138,6 +148,10 @@
         color: var(--primary-color-text);
         padding: 0.5rem;
         border-radius: var(--border-radius);
+        .p-menubar .p-menuitem-text {
+          white-space: pre-line;
+          text-align: center;
+        }
       }
       .p-togglebutton {
         padding: 0.5rem;
@@ -149,9 +163,16 @@
         border: var(--border-color);
         font-family: var(--font-family);
         font-size: var(--font-size-medium);
-        padding: 1rem;
+        padding: 0.25rem;
+        background-color: var(--primary-color);
       }
     }
+  }
+
+  .p-badge {
+    color: var(--primary-color-text);
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius);
   }
 
   .p-inputtext {
@@ -242,6 +263,32 @@
         margin: 0.5rem;
         border-style: groove;
         border-radius: var(--border-radius);
+        background-color: var(--modal-background-color);
+
+        .list-item-avatar {
+          display: flex;
+          flex-grow: 1;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          border-radius: var(--border-radius);
+          .p-overlay-badge .p-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
+            transform-origin: 100% 0;
+            margin: 0;
+          }
+          .p-badge {
+            color: var(--primary-color-text);
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+          }
+          .p-badge-no-gutter {
+            padding: 0.2rem;
+          }
+        }
         .list-item-image {
           display: flex;
           flex-wrap: wrap;
@@ -266,7 +313,32 @@
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          padding: 0.5rem;
+          padding: 1rem;
+        }
+
+        .list-item-header {
+          .p-menubar {
+            background-color: var(--secondary-header);
+            color: var(--primary-color-text);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-small);
+            .p-menubar .p-menuitem-text {
+              white-space: pre-line;
+              text-align: center;
+            }
+          }
+          .p-menuitem {
+            border: var(--border-color);
+            font-family: var(--font-family);
+            font-size: var(--font-size-small);
+            background-color: var(--primary-color);
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+          .p-menubar-end {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
         }
       }
     }
@@ -322,6 +394,42 @@
       justify-content: center;
       background-color: var(--surface-300);
       color: var(--highlight-text-color);
+    }
+  }
+
+  .p-selectbutton {
+    padding: 0.5rem;
+    .p-button {
+      background: var(--primary-color-text);
+      border: var(--primary-color-text);
+      color: var(--primary-color);
+      transition: all;
+      padding: 0.2rem;
+
+      .p-button-icon-left,
+      .p-button-icon-right {
+        color: var(--surface-400);
+      }
+
+      &:not(.p-disabled):not(.p-highlight):hover {
+        background: var(--surface-200);
+        border-color: var(--surface-200);
+
+        .p-button-icon-left,
+        .p-button-icon-right {
+          color: var(--surface-500);
+        }
+      }
+
+      &.p-highlight {
+        background: var(--surface-500);
+        border-color: var(--surface-500);
+
+        .p-button-icon-left,
+        .p-button-icon-right {
+          color: var(--surface-200);
+        }
+      }
     }
   }
 }

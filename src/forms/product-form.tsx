@@ -8,8 +8,10 @@ import { ButtonComponent } from "../components/button-component";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Product,
-  ProductCategory,
+  CategoryType,
   ProductResponse,
+  CreateProduct,
+  UpdateProduct,
 } from "../services/interface";
 import { Card } from "primereact/card";
 import { UserContextType, useUserHook } from "../context/user-context";
@@ -39,10 +41,10 @@ const transformDataForMutation = (
   >,
   product?: ProductResponse
 ) => {
-  let transformedData: Product | Partial<Product> = {};
+  let transformedData: CreateProduct | UpdateProduct = {};
   if (product) {
     if (dirtyFields.categoryType && data.categoryType) {
-      transformedData.categoryType = data.categoryType as ProductCategory;
+      transformedData.categoryType = data.categoryType as CategoryType;
     }
     if (dirtyFields.description && data.description) {
       transformedData.description = data.description;
@@ -56,9 +58,6 @@ const transformDataForMutation = (
     if (dirtyFields.name && data.name) {
       transformedData.name = data.name;
     }
-    if (dirtyFields.price && data.price) {
-      transformedData.price = data.price;
-    }
     if (dirtyFields.quantity && data.quantity) {
       transformedData.quantity = data.quantity;
     }
@@ -68,8 +67,8 @@ const transformDataForMutation = (
   } else {
     transformedData = {
       ...data,
-      userUserId: userId,
-      categoryType: data.categoryType as ProductCategory,
+      userId,
+      categoryType: data.categoryType as CategoryType,
     };
   }
   return transformedData;
@@ -90,7 +89,7 @@ const schema = yup.object({
   categoryType: yup
     .string()
     .required("You must select category type")
-    .oneOf(["", ...Object.values(ProductCategory)], "Invalid Category Type"),
+    .oneOf(["", ...Object.values(CategoryType)], "Invalid Category Type"),
   imageUrl: yup.string().required("You must enter an image url"),
   rating: yup.number().required("Product Rating Is Required"),
 });
@@ -100,7 +99,7 @@ const schema = yup.object({
  *
  * @typedef ProductFormValues
  */
-export type ProductFormValues = Omit<Product, "userUserId" | "categoryType"> & {
+export type ProductFormValues = Omit<Product, "userId" | "categoryType"> & {
   categoryType: string;
 };
 
@@ -109,31 +108,32 @@ export type ProductFormProps = {
 };
 
 export const ProductForm = ({ product }: ProductFormProps) => {
+  const defaultValues = product
+    ? {
+        categoryType: product.categoryType,
+        description: product.description,
+        imageUrl: product.imageUrl,
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity,
+        rating: product.rating ?? 0,
+      }
+    : {
+        categoryType: "",
+        description: "",
+        imageUrl: "",
+        name: "",
+        price: 0,
+        quantity: 0,
+        rating: 0,
+      };
   const form = useForm({
-    defaultValues: product
-      ? {
-          categoryType: product.categoryType,
-          description: product.description,
-          imageUrl: product.imageUrl,
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-          rating: product.rating ?? 0,
-        }
-      : {
-          categoryType: "",
-          description: "",
-          imageUrl: "",
-          name: "",
-          price: 0,
-          quantity: 0,
-          rating: 0,
-        },
+    defaultValues,
     mode: "onSubmit",
     resolver: yupResolver(schema),
   });
   const userData = useUserHook() as UserContextType;
-  const userId = userData?.loggedInUser?.userId;
+  const userId = userData?.loggedInUser?.id;
   if (!userId) {
     return <UnAuthorizedLoginComponent />;
   }
@@ -143,16 +143,16 @@ export const ProductForm = ({ product }: ProductFormProps) => {
   // if product is present then we are editing the product details
   // else we are creating a new product
   const { mutateAsync } = product
-    ? useUpdateProduct(`${product.productId}`)
+    ? useUpdateProduct(`${product.id}`)
     : useCreateProduct();
   const queryClient = useQueryClient();
 
   const onSubmit = async (data: ProductFormValues) => {
-    const transformedData: Product | Partial<Product> =
+    const transformedData: CreateProduct | UpdateProduct =
       transformDataForMutation(userId, data, dirtyFields, product);
 
-    mutateAsync(transformedData as Product, {
-      onSuccess: (response: Product) => {
+    mutateAsync(transformedData as UpdateProduct & CreateProduct, {
+      onSuccess: (response: ProductResponse) => {
         const toastTitle = `Product ${product ? "Updated" : "Created"} Successfully`;
         if (response) {
           queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PRODUCTS] });
@@ -201,7 +201,7 @@ export const ProductForm = ({ product }: ProductFormProps) => {
           control={control}
           errors={errors}
           fieldName="categoryType"
-          options={Object.values(ProductCategory)}
+          options={Object.values(CategoryType)}
         />
         <InputTextComponent
           errors={errors}

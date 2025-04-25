@@ -2,6 +2,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import {
   FieldErrors,
   FieldValues,
+  get,
   Path,
   UseFormRegister,
 } from "react-hook-form";
@@ -39,7 +40,7 @@ export const InputTextAreaComponent = <T extends FieldValues>({
   rows,
   cols,
 }: InputTextProps<T>) => {
-  const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
+  const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />

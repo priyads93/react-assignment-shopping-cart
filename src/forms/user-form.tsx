@@ -10,12 +10,62 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { ButtonComponent } from "../components/button-component";
-import { AccountType, Gender, User } from "../services/interface";
-import { useRegister } from "../services/auth-service";
+import {
+  AccountType,
+  CreateUser,
+  Gender,
+  UpdateUser,
+  User,
+  UserResponse,
+} from "../services/interface";
+import { useRegister, useUpdateUser } from "../services/auth-service";
 import { useNavigate } from "react-router";
 import { Card } from "primereact/card";
 import { InputNumberComponent } from "../components/input-number-component";
 import { PasswordComponent } from "../components/input-password-component";
+
+const transformDataForMutation = (
+  data: UserFormValues,
+  dirtyFields: Partial<
+    Readonly<{
+      name?: boolean | undefined;
+      email?: boolean | undefined;
+      password?: boolean | undefined;
+      age?: boolean | undefined;
+      gender?: boolean | undefined;
+      accountType?: boolean | undefined;
+      phoneNumber?: boolean | undefined;
+      termsAndConditions?: boolean | undefined;
+    }>
+  >,
+  user?: UserResponse
+) => {
+  let transformedData: CreateUser | UpdateUser = {};
+  if (user) {
+    if (dirtyFields.gender && data.gender) {
+      transformedData.gender = data.gender as Gender;
+    }
+    if (dirtyFields.name && data.name) {
+      transformedData.name = data.name;
+    }
+    if (dirtyFields.password && data.password) {
+      transformedData.password = data.password;
+    }
+    if (dirtyFields.age && data.age) {
+      transformedData.age = data.age;
+    }
+    if (dirtyFields.phoneNumber && data.phoneNumber) {
+      transformedData.phoneNumber = data.phoneNumber;
+    }
+  } else {
+    transformedData = {
+      ...data,
+      gender: data.gender as Gender,
+      accountType: data.accountType as AccountType,
+    };
+  }
+  return transformedData;
+};
 
 const schema = yup.object({
   name: yup.string().required("You must enter your name"),
@@ -58,52 +108,70 @@ const schema = yup.object({
 });
 
 /**
- * Represents the values for the registration form.
+ * Represents the values for the user form.
  *
- * @typedef RegistrationFormValues
+ * @typedef UserFormValues
  */
-export type RegistrationFormValues = User;
+export type UserFormValues = Omit<User, "gender" | "accountType"> & {
+  gender: string;
+  accountType: string;
+};
+
+export type UserFormProps = {
+  user?: UserResponse;
+};
 
 /**
- * RegistrationForm Component
+ * UserForm Component
  *
- * This component renders a registration form with various input fields for user details.
+ * This component renders a user form with various input fields for user details.
  * It uses `react-hook-form` for form state management and validation, and `yup` for schema validation.
  */
-export const RegistrationForm = () => {
+export const UserForm = ({ user }: UserFormProps) => {
+  const defaultValues = user
+    ? {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        age: user.age,
+        gender: user.gender,
+        accountType: user.accountType,
+        phoneNumber: user.phoneNumber,
+        termsAndConditions: user.termsAndConditions,
+      }
+    : {
+        name: "",
+        email: "",
+        password: "",
+        age: 0,
+        gender: "",
+        accountType: "",
+        phoneNumber: "",
+        termsAndConditions: false,
+      };
   const form = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      age: 0,
-      gender: "",
-      accountType: "",
-      phoneNumber: "",
-      termsAndConditions: false,
-    },
+    defaultValues,
     mode: "onSubmit",
     resolver: yupResolver(schema),
   });
 
   const { register, control, handleSubmit, formState, reset } = form;
-  const { errors, isDirty, isSubmitting } = formState;
-  const { mutateAsync } = useRegister();
+  const { errors, isDirty, isSubmitting, dirtyFields } = formState;
+  const { mutateAsync } = user ? useUpdateUser(`${user.id}`) : useRegister();
   const navigate = useNavigate();
 
-  const onSubmit = (data: RegistrationFormValues) => {
-    mutateAsync(data, {
-      onSuccess: (response: User | undefined) => {
+  const onSubmit = (data: UserFormValues) => {
+    const userData = transformDataForMutation(data, dirtyFields, user);
+
+    mutateAsync(userData as CreateUser & UpdateUser, {
+      onSuccess: (response: UserResponse | undefined) => {
         if (response) {
-          toast(
-            <ToastComponent
-              text="You have registered successfully"
-              title="Registration Successful"
-            />
-          );
+          const toastText = `You have ${user ? "updated" : "registered"} successfully`;
+          const toastTitle = `${user ? "Updation" : "Registration"} Successful`;
+          toast(<ToastComponent text={toastText} title={toastTitle} />);
           navigate("/login");
         } else {
-          throw new Error("Login failed");
+          throw new Error(`${user ? "Updation" : "Registration"} failed`);
         }
       },
       onError: (error: Error) => {
@@ -111,22 +179,23 @@ export const RegistrationForm = () => {
       },
     }).catch((error: Error) => {
       console.log("Error", error);
+      const title = `${user ? "Updation" : "Registration"} failed`;
       toast(
         <ToastComponent
           text="Please check your details and try again"
-          title="Registration Failed"
+          title={title}
         />
       );
     });
   };
   // Handle Forms Errors If InValid
-  const onError = (errors: FieldErrors<RegistrationFormValues>) => {
+  const onError = (errors: FieldErrors<UserFormValues>) => {
     console.log("Errors", errors);
     toast(<ToastComponent title="Please fix the errors in form" />);
   };
-
+  const cardTitle = user ? "Update User Details" : "Registration Form";
   return (
-    <Card title="Registration Form">
+    <Card title={cardTitle}>
       <form
         className="form"
         id="form"
@@ -144,6 +213,7 @@ export const RegistrationForm = () => {
           fieldName="email"
           register={register}
           type="email"
+          disabled={user ? true : false}
         />
         <PasswordComponent
           control={control}
@@ -168,6 +238,7 @@ export const RegistrationForm = () => {
           errors={errors}
           fieldName="accountType"
           options={Object.values(AccountType)}
+          disabled={user ? true : false}
         />
         <PhoneNumberComponent
           control={control}
@@ -179,6 +250,7 @@ export const RegistrationForm = () => {
             aria-label="Accept Terms and Conditions"
             {...register("termsAndConditions")}
             type="checkbox"
+            disabled={user ? true : false}
           />
           <LabelComponent label="Accept Terms and Conditions" />
           <ErrorComponent errorMessage={errors?.termsAndConditions?.message} />
@@ -193,16 +265,7 @@ export const RegistrationForm = () => {
           disabled={false}
           onClick={() => {
             if (window.confirm("Are you sure you want to reset the form?")) {
-              reset({
-                name: "",
-                email: "",
-                password: "",
-                age: 0,
-                gender: "",
-                accountType: "",
-                phoneNumber: "",
-                termsAndConditions: false,
-              });
+              reset(defaultValues);
             }
           }}
           type="button"

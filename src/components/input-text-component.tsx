@@ -1,6 +1,6 @@
 import { LabelComponent } from "./label-component";
 import { ErrorComponent } from "./error-component";
-import { FieldErrors, Path, UseFormRegister } from "react-hook-form";
+import { FieldErrors, get, Path, UseFormRegister } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 
@@ -9,6 +9,7 @@ interface InputTextProps<T extends FieldValues> {
   fieldName: Path<T>;
   errors: FieldErrors<T>;
   type: "text" | "number" | "password" | "email" | "date";
+  disabled?: boolean
 }
 
 
@@ -42,6 +43,7 @@ export const InputTextComponent = <T extends FieldValues>({
   fieldName,
   register,
   type,
+  disabled
 }: InputTextProps<T>) => {
   const registerOptions =
     type === "number"
@@ -54,7 +56,7 @@ export const InputTextComponent = <T extends FieldValues>({
           }
         : undefined;
 
-  const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
+  const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
@@ -64,9 +66,10 @@ export const InputTextComponent = <T extends FieldValues>({
         id={fieldName}
         {...register(fieldName, registerOptions)}
         invalid={errorMessage ? true : false}
+        disabled={disabled}
       />
 
-      {errors?.[fieldName]?.message ? (
+      {errorMessage ? (
         <ErrorComponent errorMessage={errorMessage} />
       ) : null}
     </div>

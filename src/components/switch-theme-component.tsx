@@ -3,6 +3,7 @@ import { ToastComponent } from "./toast-component";
 import { useContext, useState } from "react";
 import { PrimeReactContext } from "primereact/api";
 import { ToggleButton } from "primereact/togglebutton";
+import { SelectButton } from "primereact/selectbutton";
 
 /**
  * Determines the default theme preference for the application.
@@ -17,9 +18,11 @@ import { ToggleButton } from "primereact/togglebutton";
 const getDefaultTheme = () => {
   const storedTheme = localStorage.getItem("theme");
   if (storedTheme) {
-    return storedTheme.toLowerCase() === "dark";
+    return storedTheme.toLowerCase() === "dark" ? "Dark" : "Light";
   }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "Dark"
+    : "Light";
 };
 
 /**
@@ -31,19 +34,21 @@ const getDefaultTheme = () => {
  * @returns {JSX.Element} The rendered toggle button component.
  */
 export const SwitchThemeComponent = () => {
-  const [darkMode, setDarkMode] = useState(getDefaultTheme());
+  const options = ["Dark", "Light"];
+
+  const [theme, setTheme] = useState(getDefaultTheme());
 
   const { changeTheme } = useContext(PrimeReactContext);
 
-  const handleToggle = (input: {value: boolean}) => {
+  const handleToggle = (input: { value: string }) => {
     if (changeTheme) {
-      const newTheme = input.value ? "dark" : "light";
+      const newTheme = input.value === "Dark" ? "dark" : "light";
       changeTheme(
-        `${input.value ? "light" : "dark"}Theme`,
+        `${input.value === "Dark" ? "light" : "dark"}Theme`,
         `${newTheme}Theme`,
         "theme",
         () => {
-          setDarkMode(!darkMode);
+          setTheme(theme === "Dark" ? "Light" : "Dark");
           document.documentElement.classList.add(newTheme);
           localStorage.setItem("theme", newTheme);
         }
@@ -59,11 +64,10 @@ export const SwitchThemeComponent = () => {
   };
 
   return (
-    <ToggleButton
-      checked={darkMode}
-      offLabel="Light Mode"
+    <SelectButton
+      options={options}
+      value={theme}
       onChange={(e) => handleToggle(e)}
-      onLabel="Dark Mode"
-     />
+    />
   );
 };

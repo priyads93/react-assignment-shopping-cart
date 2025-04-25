@@ -21,10 +21,10 @@ export const UserInfoPage = () => {
   } else {
     let welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome`;
     switch (userData?.loggedInUser.accountType) {
-      case AccountType.buyer:
+      case AccountType.BUYER:
         welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome to the shopping cart. Lets start shopping.`;
         break;
-      case AccountType.seller:
+      case AccountType.SELLER:
         welcomeMessage = `Hi ${userData.loggedInUser.name}, Welcome to the shopping cart. Please start listing items. Click here`;
         break;
       default:

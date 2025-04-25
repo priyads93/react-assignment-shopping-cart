@@ -1,7 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import { Order } from "./interface";
-import { callPatchMethod, callPostMethod } from "./api-service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CreateOrder,  UpdateOrder } from "./interface";
+import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
 import { storage } from "./session-utils";
+import { QUERY_KEYS, QUERY_KEYS_BASED_ON_ID } from "../utils/queryKeys";
 
 /**
  * Custom hook to create an order using a mutation.
@@ -14,7 +15,7 @@ import { storage } from "./session-utils";
  */
 export const useCreateOrder = () => {
   return useMutation({
-    mutationFn: (data: Order) =>
+    mutationFn: (data: CreateOrder) =>
       callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/orders`, data, {
         "Content-Type": "application/json",
         Authorization: `Bearer ${storage.getToken()}`,
@@ -32,11 +33,11 @@ export const useCreateOrder = () => {
  *
  * @param orderId - The unique identifier of the order to be updated.
  * @returns A mutation object from `useMutation` that can be used to trigger
- *          the update operation and track its status. 
+ *          the update operation and track its status.
  */
 export const useUpdateOrder = (orderId: string) => {
   return useMutation({
-    mutationFn: (data: Partial<Order>) =>
+    mutationFn: (data: Partial<UpdateOrder>) =>
       callPatchMethod(
         `${import.meta.env.VITE_API_BASE_URL}/orders`,
         data,
@@ -44,6 +45,53 @@ export const useUpdateOrder = (orderId: string) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${storage.getToken()}`,
         },
+        { orderId }
+      ),
+  });
+};
+
+/**
+ * Custom hook to fetch orders from the API.
+ *
+ * @param userId - An optional user ID to filter the orders by a specific user.
+ * @returns The result of the `useQuery` hook, which includes the fetched data, loading state, and error state.
+ *
+ */
+export const useGetOrders = (userId?: string) => {
+  const queryParams: Record<string, string> = {};
+  if (userId) {
+    queryParams["filter"] = JSON.stringify({ userId });
+  }
+  return useQuery({
+    queryKey: [QUERY_KEYS.ORDERS],
+    queryFn: () =>
+      callGetMethod(
+        `${import.meta.env.VITE_API_BASE_URL}/orders`,
+        {
+          Authorization: `Bearer ${storage.getToken()}`,
+        },
+        queryParams
+      ),
+  });
+};
+
+/**
+ * Custom hook to fetch order details by order ID using React Query.
+ *
+ * @param orderId - The unique identifier of the order to fetch.
+ * @returns The result of the `useQuery` hook, which includes the order data, loading state, and error state.
+ *
+ */
+export const useGetOrder = (orderId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS_BASED_ON_ID(QUERY_KEYS.ORDER, orderId)],
+    queryFn: () =>
+      callGetMethod(
+        `${import.meta.env.VITE_API_BASE_URL}/orders`,
+        {
+          Authorization: `Bearer ${storage.getToken()}`,
+        },
+        undefined,
         { orderId }
       ),
   });

@@ -3,6 +3,7 @@ import {
   Controller,
   FieldErrors,
   FieldValues,
+  get,
   Path,
 } from "react-hook-form";
 import { ErrorComponent } from "./error-component";
@@ -14,6 +15,7 @@ interface InputSelectProps<T extends FieldValues> {
   fieldName: Path<T>;
   errors: FieldErrors<T>;
   options: string[];
+  disabled?: boolean
 }
 
 
@@ -36,7 +38,9 @@ export const InputSelectComponent = <T extends FieldValues>({
   errors,
   fieldName,
   options,
+  disabled
 }: InputSelectProps<T>): React.JSX.Element => {
+  const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
@@ -50,11 +54,12 @@ export const InputSelectComponent = <T extends FieldValues>({
             onChange={onChange}
             options={options}
             value={value}
+            disabled={disabled}
           />
         )}
       />
       <ErrorComponent
-        errorMessage={errors?.[fieldName]?.message as string | undefined}
+        errorMessage={errorMessage as string | undefined}
       />
     </div>
   );

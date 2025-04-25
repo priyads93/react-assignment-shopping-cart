@@ -1,6 +1,6 @@
 import { LabelComponent } from "./label-component";
 import { ErrorComponent } from "./error-component";
-import { Control, Controller, FieldErrors, Path } from "react-hook-form";
+import { Control, Controller, FieldErrors, get, Path } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
 import { Password } from "primereact/password";
 
@@ -29,7 +29,7 @@ export const PasswordComponent = <T extends FieldValues>({
   errors,
   fieldName,
 }: InputTextProps<T>) => {
-  const errorMessage = errors?.[fieldName]?.message?.toString() ?? "";
+  const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />

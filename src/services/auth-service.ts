@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { LoginFormValues } from "../forms/login-form";
-import { callGetMethod, callPostMethod } from "./api-service";
-import { User } from "./interface";
+import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
+import { CreateUser } from "./interface";
 import { storage } from "./session-utils";
 import { QUERY_KEYS } from "../utils/queryKeys";
 
@@ -43,9 +43,32 @@ export const useLogin = () => {
 export const useRegister = () => {
   // create the mutation
   return useMutation({
-    mutationFn: (data: User) =>
+    mutationFn: (data: CreateUser) =>
       callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/users`, data, {
         "Content-Type": "application/json",
       }),
+  });
+};
+
+/**
+ * Registers a new user.
+ *
+ * @param data - The user data to be sent in the request body. This should include
+ *               the necessary fields for user registration.
+ * @returns Promise<User>
+ */
+export const useUpdateUser = (id: string) => {
+  // create the mutation
+  return useMutation({
+    mutationFn: (data: CreateUser) =>
+      callPatchMethod(
+        `${import.meta.env.VITE_API_BASE_URL}/users`,
+        data,
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storage.getToken()}`,
+        },
+        { id }
+      ),
   });
 };

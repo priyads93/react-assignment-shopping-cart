@@ -1,5 +1,3 @@
-
-
 /**
  * A React functional component that renders a styled label element.
  *
@@ -9,9 +7,14 @@
  * @returns {JSX.Element} A label element with the provided text and styling.
  */
 export const LabelComponent = ({ label }: { label: string }) => {
+  const splitNames = label.split(".");
+  const labelName =
+    splitNames.length > 0
+      ? label.split(".")[splitNames.length - 1]
+      : splitNames[0];
   return (
     <label htmlFor={label}>
-      {label.charAt(0).toUpperCase() + label.slice(1)}
+      {labelName.charAt(0).toUpperCase() + labelName.slice(1)}
     </label>
   );
 };

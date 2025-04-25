@@ -1,6 +1,6 @@
 import { LabelComponent } from "./label-component";
 import { ErrorComponent } from "./error-component";
-import { Control, Controller, Path } from "react-hook-form";
+import { Control, Controller, get, Path } from "react-hook-form";
 import { FieldValues } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -31,6 +31,7 @@ export const PhoneNumberComponent = <T extends FieldValues>({
   fieldName,
   errors,
 }: PhoneNumberInputProps<T>) => {
+  const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
       <LabelComponent label={fieldName} />
@@ -46,7 +47,7 @@ export const PhoneNumberComponent = <T extends FieldValues>({
           />
         )}
       />
-      <ErrorComponent errorMessage={errors?.[fieldName]?.message} />
+      <ErrorComponent errorMessage={errorMessage} />
     </div>
   );
 };

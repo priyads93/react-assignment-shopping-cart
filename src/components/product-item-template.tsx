@@ -1,14 +1,7 @@
-import { ButtonComponent } from "./button-component";
-import { RatingComponent } from "./rating-component";
-import { TagComponent } from "./tag-component";
-import {
-  AccountType,
-  ProductResponse,
-  UserResponse,
-} from "../services/interface";
+import { ProductResponse, UserResponse } from "../services/interface";
 import { ReactNode } from "react";
-import { ImageComponent } from "./image-component";
 import { UnAuthorizedLoginComponent } from "./unauthorized-login-component";
+import ListItemComponent from "./list-item-component";
 
 const getInventoryAndSeverityData = (
   quantity: number
@@ -41,60 +34,37 @@ export const ProductItemTemplate = (
     price,
     quantity,
     categoryType,
-    userUserId,
-    productId,
+    userId,
+    id,
   }: ProductResponse,
   { accountType }: UserResponse,
   handleUpdateClick: (productId: number) => void,
   handleAddToCartClick: (productId: number) => void
 ): ReactNode => {
-  if (!userUserId) {
+  if (!userId) {
     return <UnAuthorizedLoginComponent />;
   }
   function handleUpdateButtonClick() {
-    handleUpdateClick(productId);
+    handleUpdateClick(id);
   }
 
   function handleAddToCartButtonClick() {
-    handleAddToCartClick(productId);
+    handleAddToCartClick(id);
   }
   return (
-    <div className="list-item" id={`${productId}`}>
-      <div className="list-item-image" id="list-item-image">
-        <ImageComponent height="60" loading="lazy" src={imageUrl} width="60" />
-      </div>
-      <div className="list-item-details">
-        <h3 style={{ margin: "0" }}>{name}</h3>
-        <p>{description}</p>
-        <RatingComponent rating={rating} />
-        <span className="list-item-category">
-          <i className="pi pi-tag product-category-icon" />
-          <span>{categoryType}</span>
-        </span>
-      </div>
-      <div className="list-item-button">
-        <span>${price}</span>
-        {accountType === AccountType.seller ? (
-          <ButtonComponent
-            buttonLabel="Update Item"
-            disabled={false}
-            id={`${productId}`}
-            onClick={handleUpdateButtonClick}
-            type="submit"
-          />
-        ) : null}
-        {accountType === AccountType.buyer ? (
-          <ButtonComponent
-            buttonLabel="Add to Cart"
-            disabled={quantity === 0}
-            icon="pi pi-shopping-cart"
-            id={`${productId}`}
-            onClick={handleAddToCartButtonClick}
-            type="submit"
-          />
-        ) : null}
-        <TagComponent data={getInventoryAndSeverityData(quantity)} />
-      </div>
-    </div>
+    <ListItemComponent
+      imageUrl={imageUrl}
+      name={name}
+      description={description}
+      categoryType={categoryType}
+      price={price}
+      id={id}
+      rating={rating}
+      accountType={accountType}
+      handleAddToCartButtonClick={handleAddToCartButtonClick}
+      handleUpdateButtonClick={handleUpdateButtonClick}
+      quantity={quantity}
+      severityData={getInventoryAndSeverityData(quantity)}
+    />
   );
 };

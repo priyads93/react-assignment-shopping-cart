@@ -5,9 +5,9 @@ import { AccountType, UserResponse } from "../services/interface";
 import { useQueryClient } from "@tanstack/react-query";
 import { SwitchThemeComponent } from "./switch-theme-component";
 import { MenuItem } from "primereact/menuitem";
-import { SplitButtonComponent } from "./split-button-component";
 import { MenuBarComponent } from "./menu-bar-component";
 import { UserContextType, useUserHook } from "../context/user-context";
+import { ButtonComponent } from "./button-component";
 
 /**
  * Header component that displays the main navigation bar for the application.
@@ -37,68 +37,112 @@ export const Header = () => {
     }
   };
 
-  const userMenuItems: MenuItem[] = [
-    {
-      id: "Login",
-      label: user?.name ? user.name : "Login",
-      template: user?.name ? (
-        <></>
-      ) : (
-        <Link aria-label="Go to Login" to="/login">
-          Login
-        </Link>
-      ),
-      url: "/",
-    },
-    {
-      id: "Log out",
-      label: "Log out",
-      command: () => handleLogout(),
-    },
-  ];
+  const productListTemplate = user ? (
+    <ButtonComponent
+      buttonLabel="Products Page"
+      icon="pi pi-shop"
+      disabled={false}
+      type="button"
+      onClick={() => navigate("/product-list")}
+    />
+  ) : null;
+
+  const homePageTemplate = (
+    <ButtonComponent
+      buttonLabel="Home Page"
+      icon="pi pi-home"
+      disabled={false}
+      type="button"
+      onClick={() => {
+        navigate("/");
+      }}
+    />
+  );
 
   const menuItems: MenuItem[] = [
     {
       id: "Shopping World",
       label: "Shopping World",
-      template: (
-        <div>
-          <Link aria-label="Go to homepage" to="/">
-            Shopping Worlds
-          </Link>
-        </div>
-      ),
-      url: "/",
+      template: homePageTemplate,
+    },
+    {
+      id: "Product List",
+      template: productListTemplate,
     },
   ];
 
-  const handleCartIconClick = () => {
-    navigate("/cart");
-  };
+  const addToCartTemplate =
+    user?.accountType === AccountType.BUYER ? (
+      <i
+        className="pi pi-shopping-cart"
+        onClick={() => {
+          navigate("/cart");
+        }}
+        style={{ fontSize: "2.5rem" }}
+      />
+    ) : null;
+
+  const orderListTemplate =
+    user?.accountType === AccountType.BUYER ? (
+      <Link to="/order-list">Orders</Link>
+    ) : null;
+
+  const getAccountSettingsLabel = (user: UserResponse | null) =>
+    user ? `Hi ${user.name}, Account Settings` : "Account Settings";
+
+  const accountSettingsLabel = getAccountSettingsLabel(user);
+
+  const endMenuItems: MenuItem[] = [
+    {
+      id: "Account Settings",
+      label: accountSettingsLabel,
+      items: [
+        {
+          id: "Login",
+          label: user?.name ? user.name : "Login",
+          template: user?.name ? (
+            <Link aria-label="Update user details" to={`/register/${user?.id}`}>
+              Update User
+            </Link>
+          ) : (
+            <Link aria-label="Go to Login" to="/login">
+              Login
+            </Link>
+          ),
+          url: "/",
+        },
+        {
+          id: "Log out",
+          label: "Log out",
+          command: () => handleLogout(),
+        },
+      ],
+    },
+    {
+      id: "Orders",
+      label: "",
+      template: orderListTemplate,
+    },
+    {
+      id: "Add To Cart",
+      label: "",
+      template: addToCartTemplate,
+    },
+    {
+      id: "Switch Theme",
+      label: "",
+      template: <SwitchThemeComponent />,
+    },
+  ];
 
   return (
     <div className="header" id="header">
       <MenuBarComponent
         end={
-          <div style={{ display: "flex", gap: "1rem" }}>
-            {user?.accountType === AccountType.buyer ? (
-              <i
-                className="pi pi-shopping-cart"
-                onClick={handleCartIconClick}
-                style={{ fontSize: '2.5rem' }}
-              />
-            ) : null}
-            <SplitButtonComponent
-              label="Account Settings"
-              menuItems={userMenuItems}
-              menuStyle={{
-                padding: "0.5rem",
-                borderRadius: "0.5rem",
-                backgroundColor: "#008080",
-              }}
-            />
-            <SwitchThemeComponent />
-          </div>
+          <MenuBarComponent
+            id="end"
+            menuItems={endMenuItems}
+          ></MenuBarComponent>
         }
         id="menubar"
         menuItems={menuItems}
