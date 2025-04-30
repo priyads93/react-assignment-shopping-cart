@@ -16,6 +16,11 @@ import { UserContextType, useUserHook } from "../context/user-context";
 import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { isUserDataValid } from "../utils/isUserDataValid";
+import {
+  useCreateCartItem,
+  useUpdateCartItem,
+} from "../services/cart-item-service";
+import { useNavigate } from "react-router";
 
 export const ProductsPage = () => {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -33,6 +38,11 @@ export const ProductsPage = () => {
   if (!isUserDataValid(userData)) {
     return <UnAuthorizedLoginComponent />;
   }
+
+  const navigate = useNavigate();
+
+  const { mutateAsync: mutateAsyncCreateCartItem } = useCreateCartItem();
+  const { mutateAsync: mutateAsyncUpdateCartItem } = useUpdateCartItem();
 
   const userIdForRetrievingProducts =
     userData.accountType === AccountType.SELLER ? userData.id.toString() : "";
@@ -57,30 +67,67 @@ export const ProductsPage = () => {
     );
   };
 
+  const handleOpenDetailsPageClick = (productId: number) => {
+    navigate(`/product-info/${productId}`);
+  };
+
   const handleAddToCartClick = (productId: number) => {
     try {
-      const alreadyExisting = cartItems?.find(
-        (cartItem) => cartItem.productId === productId
+      const alreadyExisting = cartItems.find(
+        (item) => item.productId === productId
       );
       if (alreadyExisting) {
-        setCartItems(
-          cartItems.map((cartItem) => {
-            if (cartItem.productId === productId) {
-              cartItem.quantity += 1;
-            }
-            return cartItem;
-          })
+        mutateAsyncUpdateCartItem(
+          {
+            id: `${alreadyExisting.id}`,
+            quantity: alreadyExisting.quantity + 1,
+          },
+          {
+            onSuccess: (responseData) => {
+              setCartItems(
+                cartItems.map((cartItem) => {
+                  if (cartItem.productId === productId) {
+                    return {
+                      ...cartItem,
+                      quantity: alreadyExisting.quantity + 1,
+                    };
+                  }
+                  return cartItem;
+                })
+              );
+              toast(
+                <ToastComponent title="Added Items To The Cart. Please proceed to cart page for checkout" />
+              );
+            },
+            onError: (error) => {
+              throw error;
+            },
+          }
         );
       } else {
-        setCartItems([
-          ...cartItems,
-          { productId, quantity: 1, userId: userData.id },
-        ]);
+        mutateAsyncCreateCartItem(
+          { productId: productId, quantity: 1, userId: userData.id },
+          {
+            onSuccess: (responseData) => {
+              setCartItems([
+                ...cartItems,
+                {
+                  id: responseData.id,
+                  productId: productId,
+                  quantity: 1,
+                  userId: userData.id,
+                },
+              ]);
+              toast(
+                <ToastComponent title="Added Items To The Cart. Please proceed to cart page for checkout" />
+              );
+            },
+            onError: (error) => {
+              throw error;
+            },
+          }
+        );
       }
-      toast(
-        <ToastComponent title="Added Items To The Cart. Please proceed to cart page for checkout" />
-      );
-      console.log(cartItems);
     } catch (error) {
       toast(
         <ToastComponent
@@ -124,7 +171,8 @@ export const ProductsPage = () => {
               item,
               userData as UserResponse,
               handleUpdateButtonClick,
-              handleAddToCartClick
+              handleAddToCartClick,
+              handleOpenDetailsPageClick
             )
           }
         />

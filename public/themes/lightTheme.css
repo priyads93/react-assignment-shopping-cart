@@ -17,7 +17,7 @@
   --primary-color-text: #111010;
   --modal-background-color: #229cb4;
   --secondary-color: #ffffff;
-  --secondary-header: #179cb7;  
+  --secondary-header: #179cb7;
   --surface-0: #ffffff;
   --surface-50: #fafafa;
   --surface-100: #f4f4f5;
@@ -81,6 +81,7 @@ html {
     border: outset;
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     justify-content: center;
   }
   .p-card {
@@ -92,6 +93,7 @@ html {
     border: outset;
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     justify-content: center;
   }
   .p-card-title {
@@ -110,12 +112,22 @@ html {
       align-content: space-around;
       flex-direction: column;
       margin-bottom: 0.5rem;
+      margin-right: 0.5rem;
     }
     .form {
       display: flex;
       flex-direction: column;
+      flex-wrap: wrap;
       justify-content: space-around;
       align-content: space-around;
+      .form-inputs-group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
     }
   }
   .layout {
@@ -131,6 +143,7 @@ html {
       flex-grow: 1;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       justify-content: center;
     }
     .footer {
@@ -157,6 +170,7 @@ html {
         padding: 0.5rem;
         box-shadow: 0 4px 8px 0 var(--gray-500);
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
       }
       .p-menuitem {
@@ -178,19 +192,19 @@ html {
   .p-inputtext {
     border: inset;
     border-radius: var(--border-radius);
-    width: 80%;
+    width: auto;
   }
 
   .p-password {
-    width: 80%;
     border-radius: var(--border-radius);
+    width: auto;
   }
 
   .p-invalid {
     border: red;
     border-style: solid;
     border-radius: var(--border-radius);
-    width: 80%;
+    width: auto;
   }
 
   .p-button {
@@ -200,18 +214,18 @@ html {
     align-items: center;
     justify-content: center;
     display: flex;
+    flex-wrap: wrap;
     border-radius: var(--border-radius);
     border-color: var(--primary-color-text);
   }
 
   .p-dropdown {
-    width: 80%;
-  }
-
-  .p-dropdown-item {
-    background-color: var(--primary-color);
-    color: var(--primary-color-text);
-    text-align: center;
+    width: auto;
+    .p-dropdown-item {
+      background-color: var(--primary-color);
+      color: var(--primary-color-text);
+      text-align: center;
+    }
   }
 
   .p-dropdown-label {
@@ -268,6 +282,7 @@ html {
         .list-item-avatar {
           display: flex;
           flex-grow: 1;
+          flex-wrap: wrap;
           align-items: center;
           justify-content: center;
           padding: 1rem;
@@ -298,19 +313,22 @@ html {
         }
         .list-item-details {
           display: flex;
+          flex-wrap: wrap;
           flex-grow: 1;
           flex-direction: column;
-          align-items: flex-start;
+          align-items: center;
           padding: 0.5rem;
         }
         .list-item-category {
           display: flex;
+          flex-wrap: wrap;
           align-items: center;
           gap: 0.5rem;
           margin: 0.5rem 0.5rem 0.5rem 0;
         }
         .list-item-button {
           display: flex;
+          flex-wrap: wrap;
           flex-direction: column;
           align-items: flex-start;
           padding: 1rem;
@@ -382,6 +400,7 @@ html {
       color: var(--primary-color-text);
       padding: var(--content-padding);
       display: flex;
+      flex-wrap: wrap;
       flex-direction: column;
       border-radius: var(--border-radius);
       flex-wrap: wrap;
@@ -390,6 +409,7 @@ html {
     }
     .p-dialog-title {
       display: flex;
+      flex-wrap: wrap;
       flex-grow: 1;
       justify-content: center;
       background-color: var(--surface-300);
@@ -428,6 +448,34 @@ html {
         .p-button-icon-left,
         .p-button-icon-right {
           color: var(--surface-200);
+        }
+      }
+    }
+  }
+  .p-rating{
+    padding: 0.5rem;
+  }
+  .product-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    .product-info-details {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 1rem;
+      .p-datatable {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        .p-datatable-table {
+          min-width: 40vh;
         }
       }
     }

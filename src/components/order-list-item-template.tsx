@@ -9,16 +9,29 @@ import { MenuItem } from "primereact/menuitem";
 
 type OrderItemTemplateProps = {
   order: OrderResponse;
-  handleOrderUpdate: (orderId: number) => void;
+  handleViewOrder: (orderId: number) => void;
   overlayPanelRef: RefObject<OverlayPanel | null>;
 };
 
 export const OrderListItemTemplate = ({
   order,
-  handleOrderUpdate,
+  handleViewOrder,
   overlayPanelRef,
 }: OrderItemTemplateProps) => {
+  console.log(order);
   const menuItems: MenuItem[] = [
+    {
+      id: "Order Details",
+      label: "Order Placed",
+      template: (
+        <div>
+          <span>Order Placed</span>
+          <br />
+          <span>{new Date(order?.updatedDate).toDateString()}</span>
+          <br />
+        </div>
+      ),
+    },
     {
       id: "Deliver To",
       label: "Deliver To",
@@ -53,6 +66,18 @@ export const OrderListItemTemplate = ({
       ),
       url: "/",
     },
+    {
+      id: "Order Cost",
+      label: "Order Cost",
+      template: (
+        <div>
+          <span>Total Cost</span>
+          <br />
+          <span>₹{order?.totalCost}</span>
+          <br />
+        </div>
+      ),
+    },
   ];
   return (
     <div className="list-item" id={`${order.id}`}>
@@ -68,7 +93,12 @@ export const OrderListItemTemplate = ({
             <MenuBarComponent
               id="menubar"
               menuItems={menuItems}
-              end={<span>{order?.orderStatus}</span>}
+              end={
+                <>
+                  <span>Order # {order?.id}</span> <br />
+                  <span>{order?.orderStatus}</span>
+                </>
+              }
             />
           ) : null}
         </div>
@@ -89,12 +119,11 @@ export const OrderListItemTemplate = ({
           </div>
 
           <div className="list-item-button">
-            <span>₹{order.totalCost}</span>
             <ButtonComponent
-              buttonLabel="Update Order Details"
+              buttonLabel="View Order Details"
               disabled={false}
               id={`${order.id}`}
-              onClick={(e) => handleOrderUpdate(order.id)}
+              onClick={(e) => handleViewOrder(order.id)}
               type="submit"
             />
           </div>

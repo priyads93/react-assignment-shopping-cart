@@ -9,11 +9,12 @@ import { handleApiResponse } from "../utils/handleApiResponse";
  * @returns A promise that resolves to the processed API response.
  * @throws Will throw an error if the API response indicates a failure.
  */
-export async function callPostMethod(
+export async function callPostMethod<T>(
   url: string,
   data: unknown,
   headers: Record<string, string>
-) {
+):Promise<T> {
+  console.log('data',data);
   const response = await fetch(url, {
     method: "POST",
     headers,
@@ -41,8 +42,13 @@ export async function callGetMethod(
 ) {
   if (queryParams) {
     const queryString = Object.keys(queryParams).reduce(
-      (acc: string, currValue: string) => {
-        acc = acc + `${currValue}=${queryParams[currValue]}`;
+      (acc: string, currValue: string, currIndex: number) => {
+        if (currIndex === 0) {
+          acc = acc + `${currValue}=${queryParams[currValue]}`;
+        } else {
+          acc = acc + `&${currValue}=${queryParams[currValue]}`;
+        }
+
         return acc;
       },
       ""
@@ -98,6 +104,28 @@ export async function callPatchMethod(
     method: "PATCH",
     headers,
     body: JSON.stringify(data),
+  });
+  return handleApiResponse(response);
+}
+
+export async function callDeleteMethod(
+  url: string,
+  headers: Record<string, string>,
+  pathParams: Record<string, string>
+) {
+  if (pathParams) {
+    const pathString = Object.keys(pathParams).reduce(
+      (acc: string, currValue: string) => {
+        acc = acc + `/${pathParams[currValue]}`;
+        return acc;
+      },
+      ""
+    );
+    url = `${url}${pathString}`;
+  }
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers,
   });
   return handleApiResponse(response);
 }

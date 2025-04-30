@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import {
   CartItem,
+  CartItemResponse,
   CreateOrder,
   OrderResponse,
   OrderStatus,
@@ -21,6 +22,10 @@ import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { DefaultError, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../utils/queryKeys";
+import {
+  useDeleteCartItem,
+  useUpdateCartItem,
+} from "../services/cart-item-service";
 
 export const CartPage = () => {
   const {
@@ -30,6 +35,8 @@ export const CartPage = () => {
   } = useUserHook() as UserContextType;
 
   const { mutateAsync: mutateAsyncCreateOrder } = useCreateOrder();
+  const { mutateAsync: mutateAsyncUpdateCartItem } = useUpdateCartItem();
+  const { mutateAsync: mutateAsyncDeleteCartItem } = useDeleteCartItem();
   const navigate = useNavigate();
   const getProducts = useGetProducts();
   const queryClient = useQueryClient();
@@ -101,9 +108,16 @@ export const CartPage = () => {
         onError: (error) => {
           throw error;
         },
-        onSuccess: (responseData: OrderResponse) => {
+        onSuccess: async (responseData: OrderResponse) => {
           console.log("Response", responseData);
           setCartItems([]);
+          const deleteCartItemsMutation = cartItems.map(
+            (cartItem: CartItemResponse) => {
+              return mutateAsyncDeleteCartItem(`${cartItem.id}`);
+            }
+          );
+
+          await Promise.all(deleteCartItemsMutation);
           toast(
             <ToastComponent
               text="You order have been placed successfully. Please proceed to checkout"
@@ -140,12 +154,21 @@ export const CartPage = () => {
           "Product isn't available, please adjust the cart items quantity to the available quantity."
         );
       } else {
+        const cartItemId = cartItems.find(
+          (item) => item.productId === productId
+        )?.id;
+        if (!cartItemId) {
+          throw new Error("Not a valid cart item");
+        }
         if (value <= 0) {
           setCartItems(
             cartItems.filter((cartItem) => {
               return cartItem.productId !== productId;
             })
           );
+          if (value === 0) {
+            mutateAsyncDeleteCartItem(`${cartItemId}`);
+          }
         } else {
           setCartItems(
             cartItems.map((cartItem) => {
@@ -155,6 +178,10 @@ export const CartPage = () => {
               return cartItem;
             })
           );
+          mutateAsyncUpdateCartItem({
+            id: `${cartItemId}`,
+            quantity: value,
+          });
         }
       }
     } catch (error) {

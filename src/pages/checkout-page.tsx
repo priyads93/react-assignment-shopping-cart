@@ -9,6 +9,8 @@ import { ListComponent } from "../components/list-component";
 import { Link, useNavigate, useParams } from "react-router";
 import { OrderItemTemplate } from "../components/order-item-template";
 import {
+  ModifyOrderQuantity,
+  OrderItem,
   OrderItemResponse,
   OrderResponse,
   OrderStatus,
@@ -20,6 +22,7 @@ import { DefaultError, useQueryClient } from "@tanstack/react-query";
 import { isOrderValid } from "../utils/isOrderValid";
 import { QUERY_KEYS, QUERY_KEYS_BASED_ON_ID } from "../utils/queryKeys";
 import ProcessedOrderComponent from "../components/processed-order-component";
+import { useUpdateProduct } from "../services/product-service";
 
 export const CheckOutPage = () => {
   const { id: orderId } = useParams<{ id: string }>();
@@ -30,6 +33,8 @@ export const CheckOutPage = () => {
 
   const { loggedInUser: userData } = useUserHook() as UserContextType;
   const { mutateAsync } = useUpdateOrder(orderId);
+  const productMutation = useUpdateProduct();
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -42,7 +47,7 @@ export const CheckOutPage = () => {
     isLoading,
     isError,
     error,
-  } = useGetOrder(`${orderId}`);
+  } = useGetOrder<OrderResponse>(`${orderId}`);
 
   if (isLoading) {
     return <span aria-live="polite">Loading...</span>;
@@ -72,8 +77,17 @@ export const CheckOutPage = () => {
           onError: (error) => {
             throw error;
           },
-          onSuccess: (responseData: OrderResponse) => {
-
+          onSuccess: async (responseData: OrderResponse) => {
+            // reduce the product quantity here not during create order
+            const productUpdatesMutation = orderDetails.orderItems.map(
+              (orderItem: OrderItem) => {
+                return productMutation.mutateAsync({
+                  data: { quantity: orderItem.quantity, modifyQuantity: ModifyOrderQuantity.DECREASE },
+                  productId: `${orderItem.productId}`,
+                });
+              }
+            );
+            await Promise.all(productUpdatesMutation);
             toast(
               <ToastComponent
                 text="You order have been checked out successfully"
@@ -108,8 +122,18 @@ export const CheckOutPage = () => {
           onError: (error) => {
             throw error;
           },
-          onSuccess: (responseData: OrderResponse) => {
-            // TOOD: call product mutation to update the quantity details
+          onSuccess: async (responseData: OrderResponse) => {
+            /* const productUpdatesMutation = orderDetails.orderItems.map(
+              (orderItem: OrderItem) => {
+                return productMutation.mutateAsync({
+                  data: { quantity: orderItem.quantity, modifyQuantity: ModifyOrderQuantity.INCREASE },
+                  productId: `${orderItem.productId}`,
+                });
+              }
+            );
+
+            await Promise.all(productUpdatesMutation);
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PRODUCTS] }); */
             toast(
               <ToastComponent
                 text="You order have been cancelled"
@@ -140,7 +164,7 @@ export const CheckOutPage = () => {
           flexGrow: 0,
         }}
       >
-        <CheckOutForm {...orderDetails} />
+        <CheckOutForm disabled={false} {...orderDetails} />
         <div
           className="checkout-order"
           style={{

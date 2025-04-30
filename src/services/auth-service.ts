@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { LoginFormValues } from "../forms/login-form";
 import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
-import { CreateUser } from "./interface";
+import { CreateUser, UserResponse } from "./interface";
 import { storage } from "./session-utils";
 import { QUERY_KEYS } from "../utils/queryKeys";
 
@@ -43,10 +43,14 @@ export const useLogin = () => {
 export const useRegister = () => {
   // create the mutation
   return useMutation({
-    mutationFn: (data: CreateUser) =>
-      callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/users`, data, {
-        "Content-Type": "application/json",
-      }),
+    mutationFn: (data: CreateUser): Promise<UserResponse> =>
+      callPostMethod<UserResponse>(
+        `${import.meta.env.VITE_API_BASE_URL}/users`,
+        data,
+        {
+          "Content-Type": "application/json",
+        }
+      ),
   });
 };
 

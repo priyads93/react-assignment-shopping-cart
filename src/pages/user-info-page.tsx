@@ -1,8 +1,17 @@
 import { UserContextType, useUserHook } from "../context/user-context";
 import { Link } from "react-router";
-import { AccountType } from "../services/interface";
-import { Suspense } from "react";
+import {
+  AccountType,
+  CartItemResponse,
+  OrderResponse,
+  OrderStatus,
+} from "../services/interface";
+import { Suspense, useEffect } from "react";
 import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-component";
+import { useGetOrders } from "../services/order-service";
+import { ErrorComponent } from "../components/error-component";
+import isEqual from "react-fast-compare";
+import { useGetCartItems } from "../services/cart-item-service";
 
 /**
  * The `UserInfoPage` component renders a user-specific page based on their login status and account type.
@@ -16,6 +25,7 @@ import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-com
  */
 export const UserInfoPage = () => {
   const userData = useUserHook() as UserContextType;
+  
   if (!userData?.loggedInUser) {
     return <UnAuthorizedLoginComponent />;
   } else {

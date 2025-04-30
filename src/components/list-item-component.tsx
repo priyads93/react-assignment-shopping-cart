@@ -17,6 +17,7 @@ type ListItemTemplateProps = {
   handleModifyQuantity?: (productId: number, value: number) => void;
   handleUpdateButtonClick?: (productId: number) => void;
   handleAddToCartButtonClick?: (productId: number) => void;
+  handleOpenDetailsPage?: () => void;
   id: number;
   accountType?: AccountType;
   severityData?: {
@@ -39,10 +40,11 @@ const ListItemComponent = ({
   handleModifyQuantity,
   handleUpdateButtonClick,
   handleAddToCartButtonClick,
+  handleOpenDetailsPage,
 }: ListItemTemplateProps) => {
   return (
     <div className="list-item">
-      <div className="list-item-image" id="list-item-image">
+      <div className="list-item-image" id="list-item-image" onClick={handleOpenDetailsPage}>
         <ImageComponent height="60" loading="lazy" src={imageUrl} width="60" />
       </div>
       <div className="list-item-details">

@@ -11,8 +11,8 @@ import { LabelComponent } from "./label-component";
 import { Dropdown } from "primereact/dropdown";
 
 interface InputSelectProps<T extends FieldValues> {
-  control: Control<T>;
-  fieldName: Path<T>;
+  control: Control<Partial<T>>;
+  fieldName: Path<Partial<T>>;
   errors: FieldErrors<T>;
   options: string[];
   disabled?: boolean
@@ -43,7 +43,7 @@ export const InputSelectComponent = <T extends FieldValues>({
   const errorMessage = get(errors, fieldName)?.message?.toString() ?? "";
   return (
     <div className="inputGroup" id="inputGroup">
-      <LabelComponent label={fieldName} />
+      <LabelComponent label={fieldName ?? ""} />
       <Controller
         control={control}
         name={fieldName}
@@ -53,7 +53,7 @@ export const InputSelectComponent = <T extends FieldValues>({
             id={fieldName}
             onChange={onChange}
             options={options}
-            value={value}
+            value={value as T}
             disabled={disabled}
           />
         )}

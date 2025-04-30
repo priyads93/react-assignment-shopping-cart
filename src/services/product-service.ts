@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
-import { CreateProduct, UpdateProduct } from "./interface";
+import { CreateProduct, ProductResponse, UpdateProduct } from "./interface";
 import { storage } from "./session-utils";
-import { QUERY_KEYS } from "../utils/queryKeys";
+import { QUERY_KEYS, QUERY_KEYS_BASED_ON_ID } from "../utils/queryKeys";
 
 /**
  * Custom hook to create a new product by making a POST request to the API.
@@ -12,11 +12,21 @@ import { QUERY_KEYS } from "../utils/queryKeys";
  */
 export const useCreateProduct = () => {
   return useMutation({
-    mutationFn: (data: CreateProduct) =>
-      callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/products`, data, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${storage.getToken()}`,
-      }),
+    mutationFn: ({
+      data,
+      productId,
+    }: {
+      data: CreateProduct;
+      productId?: string;
+    }): Promise<ProductResponse> =>
+      callPostMethod<ProductResponse>(
+        `${import.meta.env.VITE_API_BASE_URL}/products`,
+        data,
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storage.getToken()}`,
+        }
+      ),
   });
 };
 
@@ -28,12 +38,17 @@ export const useCreateProduct = () => {
  * necessary headers such as `Content-Type` and `Authorization`
  * with a bearer token retrieved from storage.
  *
- * @param userId - The ID of the user associated with the product update.
  * @returns A mutation object from `useMutation` to handle the update operation.
  */
-export const useUpdateProduct = (productId: string) => {
+export const useUpdateProduct = () => {
   return useMutation({
-    mutationFn: (data: UpdateProduct) =>
+    mutationFn: ({
+      productId,
+      data,
+    }: {
+      productId: string;
+      data: UpdateProduct;
+    }) =>
       callPatchMethod(
         `${import.meta.env.VITE_API_BASE_URL}/products`,
         data,
@@ -55,7 +70,7 @@ export const useUpdateProduct = (productId: string) => {
 export const useGetProducts = (userId?: string) => {
   const queryParams: Record<string, string> = {};
   if (userId) {
-    queryParams["filter"] = JSON.stringify({ userId });
+    queryParams["userId"] = userId;
   }
 
   return useQuery({
@@ -67,6 +82,34 @@ export const useGetProducts = (userId?: string) => {
           Authorization: `Bearer ${storage.getToken()}`,
         },
         queryParams
+      ),
+  });
+};
+
+/**
+ * A custom hook to fetch product details using a given product ID.
+ *
+ * This hook utilizes the `useQuery` hook from React Query to fetch product data
+ * from the API. It constructs the query key dynamically based on the product ID
+ * and sends an authenticated GET request to the API endpoint.
+ *
+ * @template T - The expected type of the product data returned by the query.
+ * @param {string} productId - The unique identifier of the product to fetch.
+ * @returns {UseQueryResult<T>} The result of the query, including the product data,
+ * loading state, and any errors encountered during the fetch.
+ * 
+ */
+export const useGetProduct = <T>(productId: string) => {
+  return useQuery<T>({
+    queryKey: [QUERY_KEYS_BASED_ON_ID(QUERY_KEYS.PRODUCTS, productId)],
+    queryFn: () =>
+      callGetMethod(
+        `${import.meta.env.VITE_API_BASE_URL}/products`,
+        {
+          Authorization: `Bearer ${storage.getToken()}`,
+        },
+        undefined,
+        { productId }
       ),
   });
 };

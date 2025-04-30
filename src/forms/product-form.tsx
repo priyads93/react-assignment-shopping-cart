@@ -37,6 +37,16 @@ const transformDataForMutation = (
       price?: boolean | undefined;
       quantity?: boolean | undefined;
       rating?: boolean | undefined;
+      specifications?: {
+        dimensions?: boolean | undefined;
+        weight?: boolean | undefined;
+        brand?: boolean | undefined;
+        material?: boolean | undefined;
+        manufacturer?: boolean | undefined;
+        modelNumber?: boolean | undefined;
+        colour?: boolean | undefined;
+        countryOfOrigin?: boolean | undefined;
+      };
     }>
   >,
   product?: ProductResponse
@@ -64,6 +74,10 @@ const transformDataForMutation = (
     if (dirtyFields.rating && data.rating) {
       transformedData.rating = data.rating;
     }
+
+    if (dirtyFields.specifications && data.specifications) {
+      transformedData.specifications = { ...data.specifications };
+    }
   } else {
     transformedData = {
       ...data,
@@ -87,11 +101,23 @@ const schema = yup.object({
     .integer()
     .positive("Entered value shouldn't be less than 0"),
   categoryType: yup
-    .string()
-    .required("You must select category type")
-    .oneOf(["", ...Object.values(CategoryType)], "Invalid Category Type"),
+    .mixed<CategoryType>()
+    .oneOf(Object.values(CategoryType))
+    .required("You must select category type"),
   imageUrl: yup.string().required("You must enter an image url"),
   rating: yup.number().required("Product Rating Is Required"),
+  specifications: yup
+    .object({
+      dimensions: yup.string().optional(),
+      weight: yup.string().optional(),
+      brand: yup.string().optional(),
+      material: yup.string().optional(),
+      manufacturer: yup.string().optional(),
+      modelNumber: yup.string().optional(),
+      color: yup.string().optional(),
+      countryOfOrigin: yup.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -110,22 +136,24 @@ export type ProductFormProps = {
 export const ProductForm = ({ product }: ProductFormProps) => {
   const defaultValues = product
     ? {
-        categoryType: product.categoryType,
+        categoryType: product.categoryType as CategoryType,
         description: product.description,
         imageUrl: product.imageUrl,
         name: product.name,
         price: product.price,
         quantity: product.quantity,
         rating: product.rating ?? 0,
+        specifications: product.specifications ?? undefined,
       }
     : {
-        categoryType: "",
+        categoryType: undefined,
         description: "",
         imageUrl: "",
         name: "",
         price: 0,
         quantity: 0,
         rating: 0,
+        specifications: undefined,
       };
   const form = useForm({
     defaultValues,
@@ -142,31 +170,32 @@ export const ProductForm = ({ product }: ProductFormProps) => {
   const { errors, isDirty, isSubmitting, dirtyFields } = formState;
   // if product is present then we are editing the product details
   // else we are creating a new product
-  const { mutateAsync } = product
-    ? useUpdateProduct(`${product.id}`)
-    : useCreateProduct();
+  const { mutateAsync } = product ? useUpdateProduct() : useCreateProduct();
   const queryClient = useQueryClient();
 
   const onSubmit = async (data: ProductFormValues) => {
     const transformedData: CreateProduct | UpdateProduct =
       transformDataForMutation(userId, data, dirtyFields, product);
-
-    mutateAsync(transformedData as UpdateProduct & CreateProduct, {
-      onSuccess: (response: ProductResponse) => {
-        const toastTitle = `Product ${product ? "Updated" : "Created"} Successfully`;
-        if (response) {
-          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PRODUCTS] });
-          toast(<ToastComponent title={toastTitle} />);
-        } else {
-          throw new Error(
-            `Product ${product ? "updation" : "creation"} failed`
-          );
-        }
-      },
-      onError: (error: Error) => {
-        throw new Error(JSON.stringify(error));
-      },
-    }).catch((error: Error) => {
+    const productId = product ? `${product.id}` : "";
+    mutateAsync(
+      { productId, data: transformedData as UpdateProduct & CreateProduct },
+      {
+        onSuccess: (response: ProductResponse) => {
+          const toastTitle = `Product ${product ? "Updated" : "Created"} Successfully`;
+          if (response) {
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PRODUCTS] });
+            toast(<ToastComponent title={toastTitle} />);
+          } else {
+            throw new Error(
+              `Product ${product ? "updation" : "creation"} failed`
+            );
+          }
+        },
+        onError: (error: Error) => {
+          throw new Error(JSON.stringify(error));
+        },
+      }
+    ).catch((error: Error) => {
       console.log("Error", error);
       const toastTitle = `Product ${product ? "updation" : "creation"} failed`;
       toast(
@@ -231,6 +260,62 @@ export const ProductForm = ({ product }: ProductFormProps) => {
           fieldName="description"
           register={register}
         />
+        <div className="form-inputs-group">
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.weight"
+            register={register}
+            type="text"
+          />
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.dimensions"
+            register={register}
+            type="text"
+          />
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.colour"
+            register={register}
+            type="text"
+          />
+        </div>
+        <div className="form-inputs-group">
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.brand"
+            register={register}
+            type="text"
+          />
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.countryOfOrigin"
+            register={register}
+            type="text"
+          />
+        </div>
+
+        <div className="form-inputs-group">
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.manufacturer"
+            register={register}
+            type="text"
+          />
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.material"
+            register={register}
+            type="text"
+          />
+          <InputTextComponent
+            errors={errors}
+            fieldName="specifications.modelNumber"
+            register={register}
+            type="text"
+          />
+        </div>
+
         <ButtonComponent
           buttonLabel={product ? "Update Product" : "Create Product"}
           disabled={!isDirty || isSubmitting}

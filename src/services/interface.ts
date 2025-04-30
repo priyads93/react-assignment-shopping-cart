@@ -21,6 +21,11 @@ export enum PaymentMode {
   OFFLINE = "offline",
 }
 
+export enum ModifyOrderQuantity {
+  INCREASE = "increase",
+  DECREASE = "decrease",
+}
+
 export enum OrderStatus {
   CANCELLED = "cancelled",
   SUCCESSFUL = "successful",
@@ -38,6 +43,17 @@ export type Address = {
   country: string;
 };
 
+export interface Specifications {
+  dimensions?: string;
+  weight?: string;
+  brand?: string;
+  material?: string;
+  manufacturer?: string;
+  modelNumber?: string;
+  colour?: string;
+  countryOfOrigin?: string;
+}
+
 export interface User {
   name: string;
   email: string;
@@ -52,13 +68,16 @@ export interface User {
 export interface UserResponse extends User {
   id: number;
   products: ProductResponse[];
-  orders: Order[];
+  orders: OrderResponse[];
+  cartItems: CartItemResponse[];
+  createdDate: string;
+  updatedDate: string;
 }
 
 export interface CreateUser extends User {}
 
 export interface UpdateUser
-  extends Omit<User, "accountType" | "termsAndConditions"|"email"> {}
+  extends Omit<User, "accountType" | "termsAndConditions" | "email"> {}
 
 export interface Product {
   name: string;
@@ -68,6 +87,7 @@ export interface Product {
   categoryType: CategoryType;
   imageUrl: string;
   rating: number;
+  specifications?: Specifications;
 }
 
 export interface ProductResponse extends Product {
@@ -75,6 +95,8 @@ export interface ProductResponse extends Product {
   user: UserResponse;
   userId: number;
   orderItems: OrderItem[];
+  createdDate: string;
+  updatedDate: string;
 }
 
 export interface CreateProduct extends Product {
@@ -82,7 +104,9 @@ export interface CreateProduct extends Product {
   orderItems: { productId: number; quantity: number }[];
 }
 
-export interface UpdateProduct extends Partial<Product> {}
+export interface UpdateProduct extends Partial<Product> {
+  modifyQuantity?: ModifyOrderQuantity;
+}
 
 export interface Order {
   description: string;
@@ -97,6 +121,8 @@ export interface OrderResponse extends Order {
   userId: number;
   user: UserResponse;
   orderItems: OrderItemResponse[];
+  createdDate: string;
+  updatedDate: string;
 }
 
 export interface CreateOrder extends Order {
@@ -127,6 +153,19 @@ export interface CartItem {
   productId: number;
   userId: number;
   quantity: number;
+}
+
+export interface CreateCartItem extends CartItem {}
+
+export interface UpdateCartItem extends Omit<CartItem, "userId" | "productId"> {
+  id: string;
+}
+
+export interface CartItemResponse extends CartItem {
+  id?: number;
+  quantity: number;
+  user?: UserResponse;
+  product?: ProductResponse;
 }
 
 export interface AuthResponse {

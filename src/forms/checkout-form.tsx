@@ -5,8 +5,7 @@ import { InputTextComponent } from "../components/input-text-component";
 import { toast } from "react-toastify";
 import { ToastComponent } from "../components/toast-component";
 import { ButtonComponent } from "../components/button-component";
-import { useNavigate } from "react-router";
-import { DefaultError, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Address,
   Order,
@@ -57,7 +56,7 @@ export type CheckOutFormValues = Pick<Order, "description" | "totalCost"> & {
   paymentMode: string;
 };
 
-type CheckOutFormProps = OrderResponse;
+type CheckOutFormProps = OrderResponse & { disabled: boolean };
 
 /**
  *
@@ -72,6 +71,7 @@ export const CheckOutForm = ({
   orderStatus,
   paymentMode,
   totalCost,
+  disabled,
 }: CheckOutFormProps) => {
   const form = useForm({
     defaultValues: {
@@ -91,6 +91,7 @@ export const CheckOutForm = ({
       totalCost: totalCost,
     },
     mode: "onSubmit",
+    disabled,
     resolver: yupResolver(orderSchema),
   });
 
@@ -112,7 +113,9 @@ export const CheckOutForm = ({
             toast(
               <ToastComponent title="Order details updated successfully" />
             );
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS_BASED_ON_ID(QUERY_KEYS.ORDER, `${id}`)] });
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_KEYS_BASED_ON_ID(QUERY_KEYS.ORDER, `${id}`)],
+            });
           } else {
             throw new Error("Order details failed to update");
           }
@@ -131,7 +134,7 @@ export const CheckOutForm = ({
       );
     });
   };
-  
+
   // Handle Forms Errors If InValid
   const onError = (errors: FieldErrors<CheckOutFormValues>) => {
     console.log("Error", errors);
@@ -170,7 +173,7 @@ export const CheckOutForm = ({
           type="text"
         />
 
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div  className="form-inputs-group">
           <InputTextComponent
             errors={errors}
             fieldName="address.city"
@@ -184,7 +187,7 @@ export const CheckOutForm = ({
             type="text"
           />
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div className="form-inputs-group">
           <InputTextComponent
             errors={errors}
             fieldName="address.stateOrProvince"
@@ -222,11 +225,15 @@ export const CheckOutForm = ({
           control={control}
           disabled={true}
         />
-        <ButtonComponent
-          buttonLabel="Update Order Details"
-          disabled={!isDirty || isSubmitting}
-          type="submit"
-        />
+        {disabled ? (
+          <></>
+        ) : (
+          <ButtonComponent
+            buttonLabel="Update Order Details"
+            disabled={!isDirty || isSubmitting}
+            type="submit"
+          />
+        )}
       </form>
     </Card>
   );

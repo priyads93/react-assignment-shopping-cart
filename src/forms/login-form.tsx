@@ -8,10 +8,17 @@ import { ButtonComponent } from "../components/button-component";
 import { useLogin } from "../services/auth-service";
 import { Link, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { AuthResponse } from "../services/interface";
+import {
+  AuthResponse,
+  OrderResponse,
+  OrderStatus,
+} from "../services/interface";
 import { Card } from "primereact/card";
 import { UserContextType, useUserHook } from "../context/user-context";
 import { PasswordComponent } from "../components/input-password-component";
+import { useGetOrders } from "../services/order-service";
+import { ErrorComponent } from "../components/error-component";
+import { QUERY_KEYS } from "../utils/queryKeys";
 
 const schema = yup.object({
   email: yup
@@ -57,12 +64,17 @@ export const LoginForm = () => {
     resolver: yupResolver(schema),
   });
 
+  let userId = "";
+
   const { register, handleSubmit, formState, control } = form;
   const { errors, isDirty, isSubmitting } = formState;
   const { mutateAsync } = useLogin();
+  
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { login } = useUserHook() as UserContextType;
+  const { login, setCartItems } = useUserHook() as UserContextType;
+
+ 
 
   const onSubmit = async (data: LoginFormValues) => {
     mutateAsync(data, {
@@ -71,12 +83,15 @@ export const LoginForm = () => {
           queryClient.setQueryData(["user"], response.user);
           login(response.user, response.access_token);
           toast(<ToastComponent title="Logged In Successfully" />);
+          userId = `${response.user.id}`;
+          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ORDERS] });
           navigate("/user");
         } else {
           throw new Error("Login failed");
         }
       },
       onError: (error: Error) => {
+        console.log("error", error);
         throw new Error(JSON.stringify(error));
       },
     }).catch((error: Error) => {

@@ -1,5 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { CreateOrderItem, UpdateOrderItem } from "./interface";
+import {
+  CartItemResponse,
+  CreateOrderItem,
+  UpdateOrderItem,
+} from "./interface";
 import { callPatchMethod, callPostMethod } from "./api-service";
 import { storage } from "./session-utils";
 
@@ -15,11 +19,15 @@ import { storage } from "./session-utils";
  */
 export const useCreateOrderItem = () => {
   return useMutation({
-    mutationFn: (data: CreateOrderItem) =>
-      callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/order-items`, data, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${storage.getToken()}`,
-      }),
+    mutationFn: (data: CreateOrderItem): Promise<CartItemResponse> =>
+      callPostMethod<CartItemResponse>(
+        `${import.meta.env.VITE_API_BASE_URL}/order-items`,
+        data,
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storage.getToken()}`,
+        }
+      ),
   });
 };
 

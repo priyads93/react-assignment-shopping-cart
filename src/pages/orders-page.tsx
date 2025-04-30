@@ -4,14 +4,19 @@ import { UnAuthorizedLoginComponent } from "../components/unauthorized-login-com
 import { UserContextType, useUserHook } from "../context/user-context";
 import { useGetOrders } from "../services/order-service";
 import { isUserDataValid } from "../utils/isUserDataValid";
-import { AccountType, OrderResponse, OrderStatus } from "../services/interface";
+import {
+  AccountType,
+  OrderItemResponse,
+  OrderResponse,
+  OrderStatus,
+} from "../services/interface";
 import DialogComponent from "../components/dialog-component";
 import { CheckOutForm } from "../forms/checkout-form";
 import { ListComponent } from "../components/list-component";
 import { Link } from "react-router";
 import { OrderListItemTemplate } from "../components/order-list-item-template";
-import ProcessedOrderComponent from "../components/processed-order-component";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { OrderItemTemplate } from "../components/order-item-template";
 
 export const OrdersPage = () => {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
@@ -30,7 +35,10 @@ export const OrdersPage = () => {
     isLoading,
     isError,
     error,
-  } = useGetOrders(`${userData.id}`);
+  } = useGetOrders<OrderResponse>(`${userData.id}`, [
+    OrderStatus.CANCELLED,
+    OrderStatus.SUCCESSFUL,
+  ]);
   if (isLoading) {
     return <span aria-live="polite">Loading...</span>;
   }
@@ -42,7 +50,7 @@ export const OrdersPage = () => {
     setIsDialogVisible(false);
   };
 
-  const handleOrderUpdate = (orderId: number) => {
+  const handleViewOrder = (orderId: number) => {
     setIsDialogVisible(true);
     setOrderSelected(
       orders?.find((item: OrderResponse) => item.id === orderId)
@@ -56,14 +64,30 @@ export const OrdersPage = () => {
           <>
             <DialogComponent
               handleSetVisible={handleSetVisible}
-              header={"Update Order"}
+              header={"View Order"}
               isVisible={isDialogVisible}
             >
-              {orderSelected.orderStatus !== OrderStatus.CREATED ? (
-                <ProcessedOrderComponent />
-              ) : (
-                <CheckOutForm {...orderSelected} />
-              )}
+              <div
+                className="checkout"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flex: 1,
+                  flexBasis: "auto",
+                  flexGrow: 0,
+                }}
+              >
+                <CheckOutForm disabled={true} {...orderSelected} />
+                <ListComponent
+                  data={orderSelected.orderItems ?? []}
+                  emptyMessage="No Items In Orders. Please proceed to shopping"
+                  footer={<></>}
+                  header="Items In Your Order"
+                  itemTemplate={(item: OrderItemResponse) =>
+                    OrderItemTemplate({ orderItem: item })
+                  }
+                />
+              </div>
             </DialogComponent>
           </>
         ) : null}
@@ -78,7 +102,7 @@ export const OrdersPage = () => {
           itemTemplate={(item: OrderResponse) =>
             OrderListItemTemplate({
               order: item,
-              handleOrderUpdate,
+              handleViewOrder,
               overlayPanelRef,
             })
           }

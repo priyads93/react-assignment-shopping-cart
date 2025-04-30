@@ -8,6 +8,7 @@ import { MenuItem } from "primereact/menuitem";
 import { MenuBarComponent } from "./menu-bar-component";
 import { UserContextType, useUserHook } from "../context/user-context";
 import { ButtonComponent } from "./button-component";
+import { Badge } from "primereact/badge";
 
 /**
  * Header component that displays the main navigation bar for the application.
@@ -22,7 +23,7 @@ import { ButtonComponent } from "./button-component";
 export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { logout, loggedInUser } = useUserHook() as UserContextType;
+  const { logout, loggedInUser, cartItems } = useUserHook() as UserContextType;
 
   const user: UserResponse | null = loggedInUser;
   const handleLogout = () => {
@@ -71,15 +72,21 @@ export const Header = () => {
     },
   ];
 
+  const cartItemCount = cartItems.reduce((acc, curr) => {
+    return acc + curr.quantity;
+  }, 0);
+
   const addToCartTemplate =
     user?.accountType === AccountType.BUYER ? (
-      <i
+      <span
         className="pi pi-shopping-cart"
         onClick={() => {
           navigate("/cart");
         }}
         style={{ fontSize: "2.5rem" }}
-      />
+      >
+        <Badge>{cartItemCount}</Badge>
+      </span>
     ) : null;
 
   const orderListTemplate =
@@ -88,8 +95,10 @@ export const Header = () => {
     ) : null;
 
   const getAccountSettingsLabel = (user: UserResponse | null) =>
-    user ? `Hi ${user.name}, 
-            Account Settings` : "Account Settings";
+    user
+      ? `Hi ${user.name}, 
+            Account Settings`
+      : "Account Settings";
 
   const accountSettingsLabel = getAccountSettingsLabel(user);
 

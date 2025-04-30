@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CreateOrder,  UpdateOrder } from "./interface";
+import { CreateOrder, Order, OrderResponse, UpdateOrder } from "./interface";
 import { callGetMethod, callPatchMethod, callPostMethod } from "./api-service";
 import { storage } from "./session-utils";
 import { QUERY_KEYS, QUERY_KEYS_BASED_ON_ID } from "../utils/queryKeys";
@@ -15,11 +15,15 @@ import { QUERY_KEYS, QUERY_KEYS_BASED_ON_ID } from "../utils/queryKeys";
  */
 export const useCreateOrder = () => {
   return useMutation({
-    mutationFn: (data: CreateOrder) =>
-      callPostMethod(`${import.meta.env.VITE_API_BASE_URL}/orders`, data, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${storage.getToken()}`,
-      }),
+    mutationFn: (data: CreateOrder): Promise<OrderResponse> =>
+      callPostMethod<OrderResponse>(
+        `${import.meta.env.VITE_API_BASE_URL}/orders`,
+        data,
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storage.getToken()}`,
+        }
+      ),
   });
 };
 
@@ -57,12 +61,15 @@ export const useUpdateOrder = (orderId: string) => {
  * @returns The result of the `useQuery` hook, which includes the fetched data, loading state, and error state.
  *
  */
-export const useGetOrders = (userId?: string) => {
+export const useGetOrders = <T>(userId?: string, orderStatus?: string[]) => {
   const queryParams: Record<string, string> = {};
   if (userId) {
-    queryParams["filter"] = JSON.stringify({ userId });
+    queryParams["userId"] = userId;
   }
-  return useQuery({
+  if (orderStatus) {
+    queryParams["orderStatus"] = orderStatus?.join(",");
+  }
+  return useQuery<T[]>({
     queryKey: [QUERY_KEYS.ORDERS],
     queryFn: () =>
       callGetMethod(
@@ -82,8 +89,8 @@ export const useGetOrders = (userId?: string) => {
  * @returns The result of the `useQuery` hook, which includes the order data, loading state, and error state.
  *
  */
-export const useGetOrder = (orderId: string) => {
-  return useQuery({
+export const useGetOrder = <T>(orderId: string) => {
+  return useQuery<T>({
     queryKey: [QUERY_KEYS_BASED_ON_ID(QUERY_KEYS.ORDER, orderId)],
     queryFn: () =>
       callGetMethod(

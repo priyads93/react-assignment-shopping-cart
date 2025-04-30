@@ -39,7 +39,8 @@ export const ProductItemTemplate = (
   }: ProductResponse,
   { accountType }: UserResponse,
   handleUpdateClick: (productId: number) => void,
-  handleAddToCartClick: (productId: number) => void
+  handleAddToCartClick: (productId: number) => void,
+  handleOpenDetailsPageClick: (productId: number) => void
 ): ReactNode => {
   if (!userId) {
     return <UnAuthorizedLoginComponent />;
@@ -50,6 +51,9 @@ export const ProductItemTemplate = (
 
   function handleAddToCartButtonClick() {
     handleAddToCartClick(id);
+  }
+  function handleOpenDetailsPage() {
+    handleOpenDetailsPageClick(id);
   }
   return (
     <ListItemComponent
@@ -65,6 +69,7 @@ export const ProductItemTemplate = (
       handleUpdateButtonClick={handleUpdateButtonClick}
       quantity={quantity}
       severityData={getInventoryAndSeverityData(quantity)}
+      handleOpenDetailsPage={handleOpenDetailsPage}
     />
   );
 };
